@@ -1,3 +1,9 @@
+/*
+ * @Author: Libra
+ * @Date: 2025-05-03 02:39:33
+ * @LastEditors: Libra
+ * @Description: 
+ */
 #include "IMESelectorWidget.h"
 #include <QComboBox>
 #include <QPushButton>
@@ -10,6 +16,9 @@
 #include <imm.h>
 #include <msctf.h>
 #include <initguid.h>
+#include "components/Button.h"
+#include "components/Input.h"
+#include "components/Select.h"
 
 enum IMEType { TSF_IME, IMM_IME };
 
@@ -98,9 +107,9 @@ IMESelectorWidget::IMESelectorWidget(QWidget* parent)
     : QWidget(parent)
 {
     auto d = new IMESelectorWidgetPrivate;
-    auto* comboBox     = new QComboBox;
-    auto* switchButton = new QPushButton(QStringLiteral("切换输入法"));
-    auto* testEdit     = new QLineEdit; // 新增测试输入框
+    auto* comboBox     = new Select;
+    auto* switchButton = new Button("切换输入法");
+    auto* testEdit     = new Input;
     testEdit->setPlaceholderText("在这里测试输入法切换效果…");
     auto* layout       = new QVBoxLayout(this);
     layout->addWidget(comboBox);
@@ -111,7 +120,7 @@ IMESelectorWidget::IMESelectorWidget(QWidget* parent)
     d->LoadIMM();
 
     for (const auto& it : d->imeList) {
-        comboBox->addItem(it.name);
+        comboBox->addOption(it.name);
     }
 
     connect(switchButton, &QPushButton::clicked, this, [=]() {

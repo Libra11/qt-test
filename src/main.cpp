@@ -1,15 +1,24 @@
+/*
+ * @Author: Libra
+ * @Date: 2025-05-02 03:38:24
+ * @LastEditors: Libra
+ * @Description: 
+ */
 #include <QApplication>
 #include <QWidget>
 #include <QVBoxLayout>
-#include <QPushButton>
 #include <QMessageBox>
 #include <QGroupBox>
+#include <QtDebug>
 #include <QLabel>
 #include "IMESelectorWidget.h"
 #include "AdminHelper.h"
 #include "HostsHelper.h"
 #include "ContentProtectionHelper.h"
 #include "SystemControlHelper.h"
+#include "components/Button.h"
+#include "components/Form.h"
+#include "components/FormItem.h"
 
 int main(int argc, char *argv[])
 {
@@ -32,31 +41,34 @@ int main(int argc, char *argv[])
     // 2. 获取管理员权限
     QGroupBox *adminGroup = new QGroupBox("管理员权限");
     QVBoxLayout *adminLayout = new QVBoxLayout(adminGroup);
-    QPushButton *adminBtn = new QPushButton("请求管理员权限");
+    Button *adminBtn = new Button("请求管理员权限");
+    adminBtn->setVariant(Button::Variant::Outline);
     adminLayout->addWidget(adminBtn);
     mainLayout->addWidget(adminGroup);
 
-    QObject::connect(adminBtn, &QPushButton::clicked, [&]() {
+    QObject::connect(adminBtn, &Button::clicked, [&]() {
         AdminHelper::RequestAdminLoop();
     });
 
     // 3. hosts管理区
     QGroupBox *hostsGroup = new QGroupBox("hosts管理");
     QVBoxLayout *hostsLayout = new QVBoxLayout(hostsGroup);
-    QPushButton *addBtn = new QPushButton("添加hosts记录（屏蔽百度）");
-    QPushButton *removeBtn = new QPushButton("删除hosts中的记录");
+    Button *addBtn = new Button("添加hosts记录（屏蔽百度）");
+    Button *removeBtn = new Button("删除hosts中的记录");
+    addBtn->setVariant(Button::Variant::Secondary);
+    removeBtn->setVariant(Button::Variant::Destructive);
     hostsLayout->addWidget(addBtn);
     hostsLayout->addWidget(removeBtn);
     mainLayout->addWidget(hostsGroup);
 
-    QObject::connect(addBtn, &QPushButton::clicked, [&]() {
+    QObject::connect(addBtn, &Button::clicked, [&]() {
         if (HostsHelper::AddHostsEntry()) {
             QMessageBox::information(&window, "成功", "已成功添加屏蔽百度的hosts记录！");
         } else {
             QMessageBox::critical(&window, "失败", "添加hosts记录失败！");
         }
     });
-    QObject::connect(removeBtn, &QPushButton::clicked, [&]() {
+    QObject::connect(removeBtn, &Button::clicked, [&]() {
         if (HostsHelper::RemoveHostsEntry()) {
             QMessageBox::information(&window, "成功", "已删除hosts中的百度记录！");
         } else {
@@ -67,11 +79,12 @@ int main(int argc, char *argv[])
     // 4. 内容保护区
     QGroupBox *protectGroup = new QGroupBox("内容保护");
     QVBoxLayout *protectLayout = new QVBoxLayout(protectGroup);
-    QPushButton *protectBtn = new QPushButton("启用内容保护");
+    Button *protectBtn = new Button("启用内容保护");
+    protectBtn->setVariant(Button::Variant::Outline);
     protectLayout->addWidget(protectBtn);
     mainLayout->addWidget(protectGroup);
 
-    QObject::connect(protectBtn, &QPushButton::clicked, [&]() {
+    QObject::connect(protectBtn, &Button::clicked, [&]() {
         static bool enabled = false;
         enabled = !enabled;
         ContentProtectionHelper::setContentProtection(&window, enabled);
@@ -81,20 +94,22 @@ int main(int argc, char *argv[])
     // 5. 系统控制区
     QGroupBox *sysGroup = new QGroupBox("系统控制");
     QVBoxLayout *sysLayout = new QVBoxLayout(sysGroup);
-    QPushButton *disableBtn = new QPushButton("霸屏");
-    QPushButton *enableBtn = new QPushButton("取消霸屏");
+    Button *disableBtn = new Button("霸屏");
+    Button *enableBtn = new Button("取消霸屏");
+    disableBtn->setVariant(Button::Variant::Destructive);
+    enableBtn->setVariant(Button::Variant::Secondary);
     sysLayout->addWidget(disableBtn);
     sysLayout->addWidget(enableBtn);
     mainLayout->addWidget(sysGroup);
 
-    QObject::connect(disableBtn, &QPushButton::clicked, [&]() {
+    QObject::connect(disableBtn, &Button::clicked, [&]() {
         SystemControlHelper::DisableTaskManager();
         SystemControlHelper::InstallHook();
         window.setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
         window.showFullScreen();
         QMessageBox::information(&window, "提示", "已禁用任务管理器并安装钩子！");
     });
-    QObject::connect(enableBtn, &QPushButton::clicked, [&]() {
+    QObject::connect(enableBtn, &Button::clicked, [&]() {
         SystemControlHelper::EnableTaskManager();
         SystemControlHelper::UninstallHook();
         window.setWindowFlags(Qt::Window);
@@ -106,6 +121,20 @@ int main(int argc, char *argv[])
     QObject::connect(&app, &QApplication::aboutToQuit, [&]() {
         SystemControlHelper::UninstallHook();
         SystemControlHelper::EnableTaskManager();
+    });
+
+    // 示例：配置驱动的表单批量添加
+    QList<FormItem> items = {
+        {"username", "input", "请输入用户名", {}, true},
+        {"password", "input", "请输入密码", {}, true},
+        {"gender", "select", "请选择性别", {"男", "女"}, true}
+    };
+    Form* form = new Form;
+    form->setupByConfig(items);
+    mainLayout->addWidget(form);
+
+    QObject::connect(form, &Form::submitted, [](const QMap<QString, QString>& values){
+        qDebug() << "表单提交:" << values;
     });
 
     window.show();

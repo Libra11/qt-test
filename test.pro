@@ -24,7 +24,11 @@ SOURCES += \
     src/IMESelectorWidget.cpp \
     src/SystemControlHelper.cpp \
     src/main.cpp \
-    src/mainwindow.cpp
+    src/mainwindow.cpp \
+    src/components/Button.cpp \
+    src/components/Input.cpp \
+    src/components/Form.cpp \
+    src/components/Select.cpp
 
 HEADERS += \
     include/AdminHelper.h \
@@ -32,10 +36,13 @@ HEADERS += \
     include/HostsHelper.h \
     include/IMESelectorWidget.h \
     include/SystemControlHelper.h \
-    include/mainwindow.h
-
-FORMS += \
-    ui/mainwindow.ui
+    include/mainwindow.h \
+    include/components/Button.h \
+    include/components/Input.h \
+    include/components/ColorManager.h \
+    include/components/Form.h \
+    include/components/Select.h \
+    include/components/FormItem.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
