@@ -4,7 +4,7 @@
  * @LastEditors: Libra
  * @Description: 
  */
-#include "IMESelectorWidget.h"
+#include "components/IME/IMESelectorWidget.h"
 #include <QComboBox>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -16,9 +16,9 @@
 #include <imm.h>
 #include <msctf.h>
 #include <initguid.h>
-#include "components/Button.h"
-#include "components/Input.h"
-#include "components/Select.h"
+#include "components/base/Button.h"
+#include "components/base/Input.h"
+#include "components/base/Select.h"
 
 enum IMEType { TSF_IME, IMM_IME };
 

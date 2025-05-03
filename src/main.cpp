@@ -11,14 +11,14 @@
 #include <QGroupBox>
 #include <QtDebug>
 #include <QLabel>
-#include "IMESelectorWidget.h"
-#include "AdminHelper.h"
-#include "HostsHelper.h"
-#include "ContentProtectionHelper.h"
-#include "SystemControlHelper.h"
-#include "components/Button.h"
-#include "components/Form.h"
-#include "components/FormItem.h"
+#include "components/IME/IMESelectorWidget.h"
+#include "helpers/AdminHelper.h"
+#include "helpers/HostsHelper.h"
+#include "helpers/ContentProtectionHelper.h"
+#include "helpers/SystemControlHelper.h"
+#include "components/base/Button.h"
+#include "components/form/Form.h"
+#include "components/form/FormItem.h"
 
 int main(int argc, char *argv[])
 {

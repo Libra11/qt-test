@@ -12,10 +12,10 @@
 #include <QMap>
 #include <QString>
 #include <QLabel>
-#include "components/Input.h"
-#include "components/Button.h"
-#include "components/Select.h"
-#include "components/FormItem.h"
+#include "components/base/Input.h"
+#include "components/base/Button.h"
+#include "components/base/Select.h"
+#include "components/form/FormItem.h"
 
 class Form : public QWidget {
     Q_OBJECT

@@ -1,5 +1,5 @@
-#include "components/Input.h"
-#include "components/ColorManager.h"
+#include "components/base/Input.h"
+#include "components/base/ColorManager.h"
 #include <QStyle>
 
 Input::Input(QWidget *parent)

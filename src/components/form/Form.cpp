@@ -4,10 +4,10 @@
  * @LastEditors: Libra
  * @Description: 
  */
-#include "components/Form.h"
+#include "components/form/Form.h"
 #include <QMap>
 #include <QLabel>
-#include "components/FormItem.h"
+#include "components/form/FormItem.h"
 
 Form::Form(QWidget *parent)
     : QWidget(parent)

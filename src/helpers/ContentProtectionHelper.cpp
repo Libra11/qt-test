@@ -1,4 +1,10 @@
-#include "ContentProtectionHelper.h"
+/*
+ * @Author: Libra
+ * @Date: 2025-05-03 03:06:43
+ * @LastEditors: Libra
+ * @Description: 
+ */
+#include "helpers/ContentProtectionHelper.h"
 #include <QOperatingSystemVersion>
 
 #ifdef Q_OS_WIN

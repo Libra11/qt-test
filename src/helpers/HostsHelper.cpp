@@ -1,4 +1,4 @@
-#include "HostsHelper.h"
+#include "helpers/HostsHelper.h"
 #include <QFile>
 #include <QTextStream>
 

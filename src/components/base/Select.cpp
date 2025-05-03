@@ -1,5 +1,5 @@
-#include "components/Select.h"
-#include "components/ColorManager.h"
+#include "components/base/Select.h"
+#include "components/base/ColorManager.h"
 
 Select::Select(QWidget *parent)
     : QComboBox(parent)

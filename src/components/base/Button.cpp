@@ -4,8 +4,8 @@
  * @LastEditors: Libra
  * @Description: 
  */
-#include "components/Button.h"
-#include "components/ColorManager.h"
+#include "components/base/Button.h"
+#include "components/base/ColorManager.h"
 #include <QStyle>
 
 Button::Button(QWidget *parent)
