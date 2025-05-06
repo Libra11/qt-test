@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT       += svg
 RESOURCES += resources/icons.qrc
@@ -29,7 +29,13 @@ SOURCES += \
     src/components/base/Input.cpp \
     src/components/form/Form.cpp \
     src/components/base/Select.cpp \
-    src/mainwindow.cpp
+    src/mainwindow.cpp \
+    src/pages/HomePage.cpp \
+    src/pages/SettingsPage.cpp \
+    src/pages/PageManager.cpp \
+    src/pages/LoginPage.cpp \
+    src/helpers/NetworkHelper.cpp \
+    src/api/ExamApi.cpp
 
 HEADERS += \
     include/helpers/AdminHelper.h \
@@ -44,7 +50,13 @@ HEADERS += \
     include/components/form/Form.h \
     include/components/base/Select.h \
     include/components/form/FormItem.h \
-    include/mainwindow.h
+    include/mainwindow.h \
+    include/pages/HomePage.h \
+    include/pages/SettingsPage.h \
+    include/pages/PageManager.h \
+    include/pages/LoginPage.h \
+    include/helpers/NetworkHelper.h \
+    include/api/ExamApi.h
 
 FORMS += \
     mainwindow.ui

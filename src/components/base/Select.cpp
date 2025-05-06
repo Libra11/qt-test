@@ -6,7 +6,6 @@
 #include <QStyledItemDelegate>
 #include <QPainter>
 #include <QFontMetrics>
-#include <QtDebug>
 
 namespace {
     class OptionDelegate : public QStyledItemDelegate {
@@ -17,7 +16,6 @@ namespace {
         {
             // 放在 Select 的构造函数里，setView 之前
             QPixmap pm(":/icons/arrow.svg");
-            qDebug() << "arrow.svg loaded? isNull =" << pm.isNull() << ", size =" << pm.size();
             // 父控件是 QListView，想同步它的字体
             if (auto *lv = qobject_cast<QListView*>(parent)) {
                 m_font = lv->font();
