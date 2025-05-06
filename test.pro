@@ -35,7 +35,8 @@ SOURCES += \
     src/pages/PageManager.cpp \
     src/pages/LoginPage.cpp \
     src/helpers/NetworkHelper.cpp \
-    src/api/ExamApi.cpp
+    src/api/ExamApi.cpp \
+    src/components/base/ClickableLabel.cpp
 
 HEADERS += \
     include/helpers/AdminHelper.h \
@@ -56,7 +57,8 @@ HEADERS += \
     include/pages/PageManager.h \
     include/pages/LoginPage.h \
     include/helpers/NetworkHelper.h \
-    include/api/ExamApi.h
+    include/api/ExamApi.h \
+    include/components/base/ClickableLabel.h
 
 FORMS += \
     mainwindow.ui

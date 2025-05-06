@@ -15,6 +15,7 @@
 #include "components/base/Button.h"
 #include <QDebug>
 #include "api/ExamApi.h"
+#include "components/base/ClickableLabel.h"
 
 LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
 {
@@ -42,15 +43,12 @@ LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
     QHBoxLayout *codeLayout = new QHBoxLayout;
     Input *imageCodeInput = new Input;
     imageCodeInput->setPlaceholder("请输入验证码");
-    QLabel *imageCodeLabel = new QLabel;
+    ClickableLabel *imageCodeLabel = new ClickableLabel;
     imageCodeLabel->setFixedSize(100, 36);
     imageCodeLabel->setStyleSheet("background:#eee; border:1px solid #ccc;");
     codeLayout->addWidget(imageCodeInput, 1);
     codeLayout->addWidget(imageCodeLabel);
     formLayout->addLayout(codeLayout);
-
-    Button *refreshBtn = new Button("换一张");
-    formLayout->addWidget(refreshBtn);
 
     Button *loginBtn = new Button("考场注册");
     loginBtn->setVariant(Button::Variant::Outline);
@@ -87,7 +85,8 @@ LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
     };
     fetchImageCode();
 
-    QObject::connect(refreshBtn, &Button::clicked, fetchImageCode);
+    // 点击验证码图片刷新
+    QObject::connect(imageCodeLabel, &ClickableLabel::clicked, fetchImageCode);
 
     // 登录
     QObject::connect(loginBtn, &Button::clicked, [=]() {

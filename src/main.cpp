@@ -19,8 +19,6 @@
 #include "helpers/SystemControlHelper.h"
 #include "helpers/UserHelper.h"
 #include "components/base/Button.h"
-#include "components/form/Form.h"
-#include "components/form/FormItem.h"
 #include "pages/HomePage.h"
 #include "pages/SettingsPage.h"
 #include "pages/PageManager.h"
@@ -62,20 +60,6 @@ int main(int argc, char *argv[])
     QObject::connect(&app, &QApplication::aboutToQuit, []() {
         SystemControlHelper::UninstallHook();
         SystemControlHelper::EnableTaskManager();
-    });
-
-    // 示例：配置驱动的表单批量添加
-    QList<FormItem> items = {
-        {"username", "input", "请输入用户名", {}, true},
-        {"password", "input", "请输入密码", {}, true},
-        {"gender", "select", "请选择性别", {"男", "女"}, true}
-    };
-    Form* form = new Form;
-    form->setupByConfig(items);
-    mainLayout->addWidget(form);
-
-    QObject::connect(form, &Form::submitted, [](const QMap<QString, QString>& values){
-        qDebug() << "表单提交:" << values;
     });
 
     window.show();
