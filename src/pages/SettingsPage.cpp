@@ -53,6 +53,9 @@ void SettingsPage::setupUI()
     adminBtn->setVariant(Button::Variant::Outline);
     adminLayout->addWidget(adminBtn);
     mainLayout->addWidget(adminGroup);
+    QObject::connect(adminBtn, &Button::clicked, this, [this]() {
+        AdminHelper::RequestAdminLoop();
+    });
 
     // 3. hosts管理区
     QGroupBox *hostsGroup = new QGroupBox("hosts管理");
@@ -64,6 +67,20 @@ void SettingsPage::setupUI()
     hostsLayout->addWidget(addBtn);
     hostsLayout->addWidget(removeBtn);
     mainLayout->addWidget(hostsGroup);
+    QObject::connect(addBtn, &Button::clicked, this, [this]() {
+        if (HostsHelper::AddHostsEntry()) {
+            QMessageBox::information(this, "成功", "已成功添加屏蔽百度的hosts记录！");
+        } else {
+            QMessageBox::critical(this, "失败", "添加hosts记录失败！");
+        }
+    });
+    QObject::connect(removeBtn, &Button::clicked, this, [this]() {
+        if (HostsHelper::RemoveHostsEntry()) {
+            QMessageBox::information(this, "成功", "已删除hosts中的百度记录！");
+        } else {
+            QMessageBox::critical(this, "失败", "删除hosts记录失败！");
+        }
+    });
 
     // 4. 内容保护区
     QGroupBox *protectGroup = new QGroupBox("内容保护");
@@ -72,6 +89,13 @@ void SettingsPage::setupUI()
     protectBtn->setVariant(Button::Variant::Outline);
     protectLayout->addWidget(protectBtn);
     mainLayout->addWidget(protectGroup);
+    QObject::connect(protectBtn, &Button::clicked, this, [this, protectBtn]() {
+        static bool enabled = false;
+        enabled = !enabled;
+        QWidget *mainWin = this->window(); // 获取主窗口指针
+        ContentProtectionHelper::setContentProtection(mainWin, enabled);
+        protectBtn->setText(enabled ? "禁用内容保护" : "启用内容保护");
+    });
 
     // 5. 系统控制区
     QGroupBox *sysGroup = new QGroupBox("系统控制");
@@ -83,89 +107,33 @@ void SettingsPage::setupUI()
     sysLayout->addWidget(disableBtn);
     sysLayout->addWidget(enableBtn);
     mainLayout->addWidget(sysGroup);
+    QObject::connect(disableBtn, &Button::clicked, this, [this]() {
+    SystemControlHelper::DisableTaskManager();
+    SystemControlHelper::InstallHook();
+    QWidget *mainWin = this->window();
+    mainWin->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    mainWin->showFullScreen();
+    QMessageBox::information(mainWin, "提示", "已禁用任务管理器并安装钩子！");
+});
+QObject::connect(enableBtn, &Button::clicked, this, [this]() {
+    SystemControlHelper::EnableTaskManager();
+    SystemControlHelper::UninstallHook();
+    QWidget *mainWin = this->window();
+    mainWin->setWindowFlags(Qt::Window);
+    mainWin->showNormal();
+    QMessageBox::information(mainWin, "提示", "已恢复任务管理器并卸载钩子！");
+});
 
     // 返回登录页面按钮
     Button *backLoginBtn = new Button("返回登录页面");
     backLoginBtn->setVariant(Button::Variant::Outline);
     mainLayout->addWidget(backLoginBtn);
-    connect(backLoginBtn, &Button::clicked, this, [this]() {
+    QObject::connect(backLoginBtn, &Button::clicked, this, [this]() {
         emit backToHome();
     });
 }
 
 void SettingsPage::setupConnections()
 {
-    // 获取管理员权限按钮
-    Button *adminBtn = findChild<Button*>();
-    if (adminBtn) {
-        QObject::connect(adminBtn, &Button::clicked, [this]() {
-            AdminHelper::RequestAdminLoop();
-        });
-    }
-
-    // Hosts管理按钮
-    QList<Button*> buttons = findChildren<Button*>();
-    for (Button* btn : buttons) {
-        if (btn->text() == "添加hosts记录（屏蔽百度）") {
-            QObject::connect(btn, &Button::clicked, [this]() {
-                if (HostsHelper::AddHostsEntry()) {
-                    QMessageBox::information(this, "成功", "已成功添加屏蔽百度的hosts记录！");
-                } else {
-                    QMessageBox::critical(this, "失败", "添加hosts记录失败！");
-                }
-            });
-        } else if (btn->text() == "删除hosts中的记录") {
-            QObject::connect(btn, &Button::clicked, [this]() {
-                if (HostsHelper::RemoveHostsEntry()) {
-                    QMessageBox::information(this, "成功", "已删除hosts中的百度记录！");
-                } else {
-                    QMessageBox::critical(this, "失败", "删除hosts记录失败！");
-                }
-            });
-        }
-    }
-
-    // 内容保护按钮
-    Button *protectBtn = nullptr;
-    for (Button* btn : buttons) {
-        if (btn->text() == "启用内容保护") {
-            protectBtn = btn;
-            break;
-        }
-    }
-    if (protectBtn) {
-        QObject::connect(protectBtn, &Button::clicked, [this, protectBtn]() {
-            static bool enabled = false;
-            enabled = !enabled;
-            ContentProtectionHelper::setContentProtection(this, enabled);
-            protectBtn->setText(enabled ? "禁用内容保护" : "启用内容保护");
-        });
-    }
-
-    // 系统控制按钮
-    Button *disableBtn = nullptr;
-    Button *enableBtn = nullptr;
-    for (Button* btn : buttons) {
-        if (btn->text() == "霸屏") {
-            disableBtn = btn;
-        } else if (btn->text() == "取消霸屏") {
-            enableBtn = btn;
-        }
-    }
-    if (disableBtn && enableBtn) {
-        QObject::connect(disableBtn, &Button::clicked, [this]() {
-            SystemControlHelper::DisableTaskManager();
-            SystemControlHelper::InstallHook();
-            this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-            this->showFullScreen();
-            QMessageBox::information(this, "提示", "已禁用任务管理器并安装钩子！");
-        });
-        QObject::connect(enableBtn, &Button::clicked, [this]() {
-            SystemControlHelper::EnableTaskManager();
-            SystemControlHelper::UninstallHook();
-            this->setWindowFlags(Qt::Window);
-            this->showNormal();
-            QMessageBox::information(this, "提示", "已恢复任务管理器并卸载钩子！");
-        });
-    }
+    // 保留此函数，但不再做按钮相关连接
 } 
