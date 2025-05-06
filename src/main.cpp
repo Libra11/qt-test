@@ -16,6 +16,7 @@
 #include "helpers/HostsHelper.h"
 #include "helpers/ContentProtectionHelper.h"
 #include "helpers/SystemControlHelper.h"
+#include "helpers/UserHelper.h"
 #include "components/base/Button.h"
 #include "components/form/Form.h"
 #include "components/form/FormItem.h"
@@ -30,6 +31,18 @@ int main(int argc, char *argv[])
     window.resize(600, 600);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(&window);
+
+    // 显示当前用户状态
+    QGroupBox *userGroup = new QGroupBox("当前用户状态");
+    QVBoxLayout *userLayout = new QVBoxLayout(userGroup);
+    QLabel *userLabel = new QLabel();
+    QString username = UserHelper::GetCurrentUsername();
+    bool isGuest = UserHelper::IsGuestUser();
+    userLabel->setText(QString("当前用户: %1\n是否为Guest用户: %2")
+                      .arg(username)
+                      .arg(isGuest ? "是" : "否"));
+    userLayout->addWidget(userLabel);
+    mainLayout->addWidget(userGroup);
 
     // 1. 输入法切换区
     QGroupBox *imeGroup = new QGroupBox("输入法切换");

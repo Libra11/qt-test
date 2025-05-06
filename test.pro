@@ -21,28 +21,33 @@ SOURCES += \
     src/helpers/AdminHelper.cpp \
     src/helpers/ContentProtectionHelper.cpp \
     src/helpers/HostsHelper.cpp \
+    src/helpers/UserHelper.cpp \
     src/components/IME/IMESelectorWidget.cpp \
     src/helpers/SystemControlHelper.cpp \
     src/main.cpp \
-    src/mainwindow.cpp \
     src/components/base/Button.cpp \
     src/components/base/Input.cpp \
     src/components/form/Form.cpp \
-    src/components/base/Select.cpp
+    src/components/base/Select.cpp \
+    src/mainwindow.cpp
 
 HEADERS += \
     include/helpers/AdminHelper.h \
     include/helpers/ContentProtectionHelper.h \
     include/helpers/HostsHelper.h \
+    include/helpers/UserHelper.h \
     include/components/IME/IMESelectorWidget.h \
     include/helpers/SystemControlHelper.h \
-    include/mainwindow.h \
     include/components/base/Button.h \
     include/components/base/Input.h \
     include/components/base/ColorManager.h \
     include/components/form/Form.h \
     include/components/base/Select.h \
-    include/components/form/FormItem.h
+    include/components/form/FormItem.h \
+    include/mainwindow.h
+
+FORMS += \
+    mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
