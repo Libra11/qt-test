@@ -36,7 +36,8 @@ SOURCES += \
     src/pages/LoginPage.cpp \
     src/helpers/NetworkHelper.cpp \
     src/api/ExamApi.cpp \
-    src/components/base/ClickableLabel.cpp
+    src/components/base/ClickableLabel.cpp \
+    src/helpers/SettingsHelper.cpp
 
 HEADERS += \
     include/helpers/AdminHelper.h \
@@ -58,12 +59,19 @@ HEADERS += \
     include/pages/LoginPage.h \
     include/helpers/NetworkHelper.h \
     include/api/ExamApi.h \
-    include/components/base/ClickableLabel.h
+    include/components/base/ClickableLabel.h \
+    include/helpers/SettingsHelper.h
 
 FORMS += \
     mainwindow.ui
 
 # Default rules for deployment.
+qnx: target.path = /tmp/$${TARGET}/bin
+else: unix:!android: target.path = /opt/$${TARGET}/bin
+!isEmpty(target.path): INSTALLS += target
+
+win32: LIBS += -lImm32 -lole32 -luuid -loleaut32 -lUser32
+
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target

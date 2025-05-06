@@ -5,6 +5,8 @@
  * @Description: 
  */
 #include "helpers/NetworkHelper.h"
+#include <QNetworkRequest>
+#include <QUrl>
 
 NetworkHelper* NetworkHelper::instance()
 {
@@ -17,6 +19,9 @@ NetworkHelper::NetworkHelper(QObject* parent)
 {
     m_manager = new QNetworkAccessManager(this);
 }
+
+void NetworkHelper::setToken(const QString& token) { m_token = token; }
+QString NetworkHelper::getToken() const { return m_token; }
 
 void NetworkHelper::get(const QString& url, std::function<void(QJsonObject)> onSuccess, std::function<void(QString)> onError)
 {
@@ -31,6 +36,9 @@ void NetworkHelper::get(const QString& url, std::function<void(QJsonObject)> onS
     }
     
     QNetworkRequest req(qUrl);
+    if (!m_token.isEmpty()) {
+        req.setRawHeader("Authorization", m_token.toUtf8());
+    }
     QNetworkReply* reply = m_manager->get(req);
     QObject::connect(reply, &QNetworkReply::finished, [reply, onSuccess, onError]() {
         QByteArray data = reply->readAll();
@@ -58,6 +66,9 @@ void NetworkHelper::post(const QString& url, const QJsonObject& data, std::funct
 
     QNetworkRequest req(qUrl);
     req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    if (!m_token.isEmpty()) {
+        req.setRawHeader("Authorization", m_token.toUtf8());
+    }
     QNetworkReply* reply = m_manager->post(req, QJsonDocument(data).toJson());
     QObject::connect(reply, &QNetworkReply::finished, [reply, onSuccess, onError]() {
         QByteArray data = reply->readAll();

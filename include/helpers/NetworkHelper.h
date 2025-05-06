@@ -22,6 +22,8 @@ class NetworkHelper : public QObject
     Q_OBJECT
 public:
     static NetworkHelper* instance();
+    void setToken(const QString& token);
+    QString getToken() const;
 
     // GET 请求
     void get(const QString& url, std::function<void(QJsonObject)> onSuccess, std::function<void(QString)> onError = nullptr);
@@ -32,6 +34,7 @@ public:
 private:
     explicit NetworkHelper(QObject* parent = nullptr);
     QNetworkAccessManager* m_manager;
+    QString m_token;
 };
 
 #endif // NETWORKHELPER_H 

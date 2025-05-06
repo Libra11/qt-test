@@ -56,6 +56,13 @@ int main(int argc, char *argv[])
         });
     }
 
+    SettingsPage* settingsPage = qobject_cast<SettingsPage*>(pageManager->getPage("settings"));
+    if (settingsPage) {
+        QObject::connect(settingsPage, &SettingsPage::backToHome, [pageManager]() {
+            pageManager->switchTo("login");
+        });
+    }
+
     // 退出时恢复系统设置
     QObject::connect(&app, &QApplication::aboutToQuit, []() {
         SystemControlHelper::UninstallHook();

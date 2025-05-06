@@ -9,17 +9,13 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QGroupBox>
-#include "components/base/Input.h"
 #include "components/base/Button.h"
-#include "components/form/Form.h"
-#include "components/form/FormItem.h"
 #include "helpers/UserHelper.h"
 #include "helpers/AdminHelper.h"
 #include "helpers/HostsHelper.h"
 #include "helpers/ContentProtectionHelper.h"
 #include "helpers/SystemControlHelper.h"
 #include "components/IME/IMESelectorWidget.h"
-#include <QDebug>
 
 SettingsPage::SettingsPage(QWidget *parent) : QWidget(parent)
 {
@@ -88,15 +84,13 @@ void SettingsPage::setupUI()
     sysLayout->addWidget(enableBtn);
     mainLayout->addWidget(sysGroup);
 
-    // 示例：配置驱动的表单批量添加
-    QList<FormItem> items = {
-        {"username", "input", "请输入用户名", {}, true},
-        {"password", "input", "请输入密码", {}, true},
-        {"gender", "select", "请选择性别", {"男", "女"}, true}
-    };
-    Form* form = new Form;
-    form->setupByConfig(items);
-    mainLayout->addWidget(form);
+    // 返回登录页面按钮
+    Button *backLoginBtn = new Button("返回登录页面");
+    backLoginBtn->setVariant(Button::Variant::Outline);
+    mainLayout->addWidget(backLoginBtn);
+    connect(backLoginBtn, &Button::clicked, this, [this]() {
+        emit backToHome();
+    });
 }
 
 void SettingsPage::setupConnections()
@@ -172,14 +166,6 @@ void SettingsPage::setupConnections()
             this->setWindowFlags(Qt::Window);
             this->showNormal();
             QMessageBox::information(this, "提示", "已恢复任务管理器并卸载钩子！");
-        });
-    }
-
-    // 表单提交
-    Form* form = findChild<Form*>();
-    if (form) {
-        QObject::connect(form, &Form::submitted, [](const QMap<QString, QString>& values){
-            qDebug() << "表单提交:" << values;
         });
     }
 } 

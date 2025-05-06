@@ -68,16 +68,6 @@ void HomePage::setupUI()
     sysLayout->addWidget(disableBtn);
     sysLayout->addWidget(enableBtn);
     mainLayout->addWidget(sysGroup);
-
-    // 示例：配置驱动的表单批量添加
-    QList<FormItem> items = {
-        {"username", "input", "请输入用户名", {}, true},
-        {"password", "input", "请输入密码", {}, true},
-        {"gender", "select", "请选择性别", {"男", "女"}, true}
-    };
-    Form* form = new Form;
-    form->setupByConfig(items);
-    mainLayout->addWidget(form);
 }
 
 void HomePage::setupConnections()
@@ -153,14 +143,6 @@ void HomePage::setupConnections()
             this->setWindowFlags(Qt::Window);
             this->showNormal();
             QMessageBox::information(this, "提示", "已恢复任务管理器并卸载钩子！");
-        });
-    }
-
-    // 表单提交
-    Form* form = findChild<Form*>();
-    if (form) {
-        QObject::connect(form, &Form::submitted, [](const QMap<QString, QString>& values){
-            qDebug() << "表单提交:" << values;
         });
     }
 } 

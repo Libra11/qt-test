@@ -8,6 +8,7 @@
 #include <QMap>
 #include <QLabel>
 #include "components/form/FormItem.h"
+#include <QHBoxLayout>
 
 Form::Form(QWidget *parent)
     : QWidget(parent)
@@ -15,7 +16,6 @@ Form::Form(QWidget *parent)
     layout = new QVBoxLayout(this);
     submitBtn = new Button("提交");
     submitBtn->setVariant(Button::Variant::Default);
-    layout->addWidget(submitBtn);
     connect(submitBtn, &Button::clicked, this, &Form::handleSubmit);
 }
 
@@ -136,9 +136,19 @@ void Form::setupByConfig(const QList<FormItem>& items)
     for (const auto& item : items) {
         if (item.type == "input") {
             addInput(item.key, item.placeholder);
+            setRequired(item.key, item.required);
         } else if (item.type == "select") {
             addSelect(item.key, item.options, item.placeholder);
+            setRequired(item.key, item.required);
+        } else if (item.type == "custom" && item.customWidgetFactory) {
+            QWidget* customWidget = item.customWidgetFactory(this);
+            customWidget->setObjectName(item.key);
+            layout->addWidget(customWidget);
         }
-        setRequired(item.key, item.required);
     }
+    layout->addWidget(submitBtn); // 保证提交按钮在最下方
+}
+
+QWidget* Form::getCustomWidget(const QString& key) const {
+    return this->findChild<QWidget*>(key);
 } 

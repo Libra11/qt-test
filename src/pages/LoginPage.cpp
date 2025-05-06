@@ -16,6 +16,10 @@
 #include <QDebug>
 #include "api/ExamApi.h"
 #include "components/base/ClickableLabel.h"
+#include "components/form/Form.h"
+#include "components/form/FormItem.h"
+#include "helpers/NetworkHelper.h"
+#include "helpers/SettingsHelper.h"
 
 LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
 {
@@ -36,26 +40,53 @@ LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
     logoLabel->setStyleSheet("font-size: 28px; margin-bottom: 20px;");
     formLayout->addWidget(logoLabel);
 
-    Input *loginCodeInput = new Input;
-    loginCodeInput->setPlaceholder("考场序列号");
-    formLayout->addWidget(loginCodeInput);
+    // 声明验证码图片指针
+    ClickableLabel *imageCodeLabel = nullptr;
 
-    QHBoxLayout *codeLayout = new QHBoxLayout;
-    Input *imageCodeInput = new Input;
-    imageCodeInput->setPlaceholder("请输入验证码");
-    ClickableLabel *imageCodeLabel = new ClickableLabel;
-    imageCodeLabel->setFixedSize(100, 36);
-    imageCodeLabel->setStyleSheet("background:#eee; border:1px solid #ccc;");
-    codeLayout->addWidget(imageCodeInput, 1);
-    codeLayout->addWidget(imageCodeLabel);
-    formLayout->addLayout(codeLayout);
+    // 登录表单配置（分步赋值，兼容lambda）
+    QList<FormItem> items;
+    FormItem loginCodeItem;
+    loginCodeItem.key = "loginCode";
+    loginCodeItem.type = "input";
+    loginCodeItem.placeholder = "考场序列号";
+    loginCodeItem.options = QStringList();
+    loginCodeItem.required = true;
+    items.append(loginCodeItem);
+    FormItem imageCodeItem;
+    imageCodeItem.key = "imageCode";
+    imageCodeItem.type = "custom";
+    imageCodeItem.placeholder = "";
+    imageCodeItem.options = QStringList();
+    imageCodeItem.required = true;
+    imageCodeItem.customWidgetFactory = [this, &imageCodeLabel](QWidget* parent) -> QWidget* {
+        QWidget* w = new QWidget(parent);
+        QHBoxLayout* h = new QHBoxLayout(w);
+        Input* input = new Input(w);
+        input->setObjectName("imageCode");
+        input->setPlaceholder("请输入验证码");
+        imageCodeLabel = new ClickableLabel(w);
+        imageCodeLabel->setFixedSize(100, 36);
+        imageCodeLabel->setStyleSheet("background:#eee; border:1px solid #ccc;");
+        h->addWidget(input, 1);
+        h->addWidget(imageCodeLabel);
+        h->setContentsMargins(0,0,0,0);
+        return w;
+    };
+    items.append(imageCodeItem);
 
-    Button *loginBtn = new Button("考场注册");
-    loginBtn->setVariant(Button::Variant::Outline);
-    formLayout->addWidget(loginBtn);
-
+    Form* form = new Form;
+    form->setupByConfig(items);
+    form->setSubmitText("考场注册");
+    formLayout->addWidget(form);
     formLayout->addStretch();
     mainLayout->addWidget(formWidget, 1);
+
+    // 自动填充loginCode
+    QString savedLoginCode = SettingsHelper::value("loginCode").toString();
+    Input* loginCodeInput = form->findChild<Input*>("loginCode");
+    if (loginCodeInput && !savedLoginCode.isEmpty()) {
+        loginCodeInput->setText(savedLoginCode);
+    }
 
     // 获取验证码图片
     auto fetchImageCode = [=]() {
@@ -72,26 +103,34 @@ LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
                     }
                 }
                 QPixmap pix;
-                if (pix.loadFromData(QByteArray::fromBase64(base64.toUtf8())) && !pix.isNull()) {
+                if (imageCodeLabel && pix.loadFromData(QByteArray::fromBase64(base64.toUtf8())) && !pix.isNull()) {
                     imageCodeLabel->setPixmap(pix.scaled(imageCodeLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-                } else {
+                } else if (imageCodeLabel) {
                     imageCodeLabel->setText("加载失败");
                 }
             },
             [=](QString err) {
-                imageCodeLabel->setText("加载失败" + err);
+                if (imageCodeLabel) imageCodeLabel->setText("加载失败" + err);
             }
         );
     };
     fetchImageCode();
 
-    // 点击验证码图片刷新
-    QObject::connect(imageCodeLabel, &ClickableLabel::clicked, fetchImageCode);
+    // 验证码图片点击刷新
+    if (imageCodeLabel) {
+        QObject::connect(imageCodeLabel, &ClickableLabel::clicked, fetchImageCode);
+    }
 
-    // 登录
-    QObject::connect(loginBtn, &Button::clicked, [=]() {
-        QString loginCode = loginCodeInput->text().trimmed();
-        QString imageCode = imageCodeInput->text().trimmed();
+    // 表单提交
+    QObject::connect(form, &Form::submitted, [=](const QMap<QString, QString>& values){
+        QString loginCode = values.value("loginCode").trimmed();
+        QString imageCode;
+        // 获取自定义控件中的输入框内容
+        QWidget* customWidget = form->getCustomWidget("imageCode");
+        if (customWidget) {
+            Input* input = customWidget->findChild<Input*>("imageCode");
+            if (input) imageCode = input->text().trimmed();
+        }
         if (loginCode.isEmpty() || imageCode.isEmpty()) {
             QMessageBox::warning(this, "提示", "请填写所有信息");
             return;
@@ -99,6 +138,11 @@ LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
         ExamApi::login(loginCode, imageCode, m_imageKey,
             [=](QJsonObject obj) {
                 if (obj["code"].toInt() == 0) {
+                    // 存储token
+                    QString token = obj["data"].toObject()["token"].toString();
+                    NetworkHelper::instance()->setToken(token);
+                    // 持久化loginCode
+                    SettingsHelper::setValue("loginCode", loginCode);
                     emit loginSuccess();
                 } else {
                     QMessageBox::warning(this, "登录失败", obj["msg"].toString());

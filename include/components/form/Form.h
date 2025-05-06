@@ -33,6 +33,7 @@ public:
     // 设置提交按钮文本
     void setSubmitText(const QString &text);
     void setupByConfig(const QList<FormItem>& items);
+    QWidget* getCustomWidget(const QString& key) const;
 
 signals:
     // 表单提交信号，参数为所有字段的键值对
