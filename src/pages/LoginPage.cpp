@@ -43,38 +43,45 @@ LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
     // 声明验证码图片指针
     ClickableLabel *imageCodeLabel = nullptr;
 
-    // 登录表单配置（分步赋值，兼容lambda）
-    QList<FormItem> items;
-    FormItem loginCodeItem;
-    loginCodeItem.key = "loginCode";
-    loginCodeItem.type = "input";
-    loginCodeItem.placeholder = "考场序列号";
-    loginCodeItem.options = QStringList();
-    loginCodeItem.required = true;
-    items.append(loginCodeItem);
-    FormItem imageCodeItem;
-    imageCodeItem.key = "imageCode";
-    imageCodeItem.type = "custom";
-    imageCodeItem.placeholder = "";
-    imageCodeItem.options = QStringList();
-    imageCodeItem.required = true;
-    imageCodeItem.customWidgetFactory = [this, &imageCodeLabel](QWidget* parent) -> QWidget* {
-        QWidget* w = new QWidget(parent);
-        QHBoxLayout* h = new QHBoxLayout(w);
-        Input* input = new Input(w);
-        input->setObjectName("imageCode");
-        input->setPlaceholder("请输入验证码");
-        imageCodeLabel = new ClickableLabel(w);
-        imageCodeLabel->setFixedSize(100, 36);
-        imageCodeLabel->setStyleSheet("background:#eee; border:1px solid #ccc;");
-        h->addWidget(input, 1);
-        h->addWidget(imageCodeLabel);
-        h->setContentsMargins(0,0,0,0);
-        return w;
-    };
-    items.append(imageCodeItem);
-
+    // 创建表单
     Form* form = new Form;
+    form->setLayout(Form::Layout::Vertical);
+    form->setLabelPosition(Form::LabelPosition::Top);
+    form->setLabelWidth(120);
+
+    // 登录表单配置
+    QList<FormItem> items = {
+        FormItem(
+            "loginCode",  // key
+            FormItemType::Input,  // type
+            "考场序列号",  // label
+            "请输入考场序列号",  // placeholder
+            true,  // required
+            nullptr  // customWidgetFactory 为 nullptr，因为这是 Input 类型
+        ),
+        FormItem(
+            "imageCode",  // key
+            FormItemType::Custom,  // type
+            "验证码",  // label
+            "请输入验证码",  // placeholder（Custom 类型通常为空）
+            true,  // required
+            [&imageCodeLabel](QWidget* parent) -> QWidget* {  // customWidgetFactory
+                QWidget* w = new QWidget(parent);
+                QHBoxLayout* h = new QHBoxLayout(w);
+                Input* input = new Input(w);
+                input->setObjectName("imageCode");
+                input->setPlaceholder("请输入验证码");
+                imageCodeLabel = new ClickableLabel(w);
+                imageCodeLabel->setFixedSize(100, 36);
+                imageCodeLabel->setStyleSheet("background:#eee; border:1px solid #ccc;");
+                h->addWidget(input, 1);
+                h->addWidget(imageCodeLabel);
+                h->setContentsMargins(0,0,0,0);
+                return w;
+            }
+        )
+    };
+
     form->setupByConfig(items);
     form->setSubmitText("考场注册");
     formLayout->addWidget(form);
@@ -83,9 +90,8 @@ LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
 
     // 自动填充loginCode
     QString savedLoginCode = SettingsHelper::value("loginCode").toString();
-    Input* loginCodeInput = form->findChild<Input*>("loginCode");
-    if (loginCodeInput && !savedLoginCode.isEmpty()) {
-        loginCodeInput->setText(savedLoginCode);
+    if (!savedLoginCode.isEmpty()) {
+        form->setValues({{"loginCode", savedLoginCode}});
     }
 
     // 获取验证码图片
@@ -121,8 +127,13 @@ LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
         QObject::connect(imageCodeLabel, &ClickableLabel::clicked, fetchImageCode);
     }
 
+    // 监听验证错误
+    QObject::connect(form, &Form::validationError, [](const QString& key, const QString& error) {
+        qDebug() << "Validation error:" << key << error;
+    });
+
     // 表单提交
-    QObject::connect(form, &Form::submitted, [=](const QMap<QString, QString>& values){
+    QObject::connect(form, &Form::submitted, [=](const QMap<QString, QString>& values) {
         QString loginCode = values.value("loginCode").trimmed();
         QString imageCode;
         // 获取自定义控件中的输入框内容
@@ -131,10 +142,7 @@ LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
             Input* input = customWidget->findChild<Input*>("imageCode");
             if (input) imageCode = input->text().trimmed();
         }
-        if (loginCode.isEmpty() || imageCode.isEmpty()) {
-            QMessageBox::warning(this, "提示", "请填写所有信息");
-            return;
-        }
+
         ExamApi::login(loginCode, imageCode, m_imageKey,
             [=](QJsonObject obj) {
                 if (obj["code"].toInt() == 0) {

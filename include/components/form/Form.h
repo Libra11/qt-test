@@ -1,14 +1,7 @@
-/*
- * @Author: Libra
- * @Date: 2025-05-03 14:30:26
- * @LastEditors: Libra
- * @Description: 
- */
 #ifndef FORM_H
 #define FORM_H
 
 #include <QWidget>
-#include <QVBoxLayout>
 #include <QMap>
 #include <QString>
 #include <QLabel>
@@ -20,35 +13,55 @@
 class Form : public QWidget {
     Q_OBJECT
 public:
+    enum class Layout { Vertical, Horizontal, Grid };
+    enum class LabelPosition { Top, Left };
+
     explicit Form(QWidget *parent = nullptr);
 
-    // 添加输入框，key为字段名，placeholder为占位符
     void addInput(const QString &key, const QString &placeholder = "");
-    // 添加下拉框，key为字段名，options为选项列表，placeholder为占位符
     void addSelect(const QString &key, const QStringList &options, const QString &placeholder = "");
-    // 设置输入框为必填
     void setRequired(const QString &key, bool required = true);
-    // 获取输入框内容
     QString value(const QString &key) const;
-    // 设置提交按钮文本
     void setSubmitText(const QString &text);
     void setupByConfig(const QList<FormItem>& items);
     QWidget* getCustomWidget(const QString& key) const;
+    QLayout* layout;
+    Button *submitBtn;
+    void setLayout(Layout layout);
+    void setLabelPosition(LabelPosition pos);
+    void setLabelWidth(int width);
+    void reset();
+    void setValues(const QMap<QString, QString>& values);
+    void setDisabled(const QString& key, bool disabled);
+    void addValidationRule(const QString& key, const FormValidationRule& rule);
+    Layout m_layout = Layout::Vertical;
+    LabelPosition m_labelPosition = LabelPosition::Top;
+    int m_labelWidth = 100;
+    QList<QString> m_fieldOrder;
+    void updateLayout();
+    bool validateField(const QString& key, const QString& value);
+    void setupFieldConnections(const QString& key, QWidget* widget);
 
-signals:
-    // 表单提交信号，参数为所有字段的键值对
-    void submitted(const QMap<QString, QString> &values);
-
-private slots:
-    void handleSubmit();
-
-private:
-    QVBoxLayout *layout;
     QMap<QString, Input*> inputs;
     QMap<QString, Select*> selects;
     QMap<QString, QLabel*> errorLabels;
+    QMap<QString, QLabel*> fieldLabels;
     QMap<QString, bool> requiredFields;
-    Button *submitBtn;
+    QMap<QString, QList<FormValidationRule>> validationRules;
+    QMap<QString, QString> initialValues;
+    bool m_isDirty = false;
+
+
+signals:
+    void submitted(const QMap<QString, QString> &values);
+    void validationError(const QString& key, const QString& errorMessage);
+    void beforeSubmit();
+    void afterSubmit();
+    void formChanged();
+
+private slots:
+    void handleSubmit();
+    void handleValueChanged();
 };
 
-#endif // FORM_H 
+#endif // FORM_H

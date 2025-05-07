@@ -28,6 +28,12 @@ SOURCES += \
     src/components/base/Button.cpp \
     src/components/base/Input.cpp \
     src/components/form/Form.cpp \
+    src/components/form/FormSignals.cpp \
+    src/components/form/FormValidation.cpp \
+    src/components/form/FormLayoutManager.cpp \
+    src/components/form/FormCustomWidget.cpp \
+    src/components/form/FormInput.cpp \
+    src/components/form/FormSelect.cpp \
     src/components/base/Select.cpp \
     src/mainwindow.cpp \
     src/pages/HomePage.cpp \
@@ -50,6 +56,12 @@ HEADERS += \
     include/components/base/Input.h \
     include/components/base/ColorManager.h \
     include/components/form/Form.h \
+    include/components/form/FormCustomWidget.h \
+    include/components/form/FormInput.h \
+    include/components/form/FormSelect.h \
+    include/components/form/FormSignals.h \
+    include/components/form/FormValidation.h \
+    include/components/form/FormLayoutManager.h \
     include/components/base/Select.h \
     include/components/form/FormItem.h \
     include/mainwindow.h \
