@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "PageBase.h"
+#include "components/form/Form.h"
 
 class LoginPage : public PageBase
 {
@@ -12,6 +13,7 @@ public:
 
 private:
     QString m_imageKey;
+    Form* form;
 };
 
 #endif // LOGINPAGE_H 

@@ -42,6 +42,7 @@ SOURCES += \
     src/pages/PageManager.cpp \
     src/pages/LoginPage.cpp \
     src/helpers/NetworkHelper.cpp \
+    src/helpers/LanguageManager.cpp \
     src/api/ExamApi.cpp \
     src/components/base/ClickableLabel.cpp \
     src/helpers/SettingsHelper.cpp
@@ -73,12 +74,17 @@ HEADERS += \
     include/pages/LoginPage.h \
     include/pages/PageBase.h \
     include/helpers/NetworkHelper.h \
+    include/helpers/LanguageManager.h \
     include/api/ExamApi.h \
     include/components/base/ClickableLabel.h \
     include/helpers/SettingsHelper.h
 
 FORMS += \
     mainwindow.ui
+
+TRANSLATIONS += \ 
+    i18n/translations/zh_CN.ts \
+    i18n/translations/en.ts \
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

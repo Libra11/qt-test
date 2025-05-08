@@ -52,7 +52,7 @@ LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
     ClickableLabel *imageCodeLabel = nullptr;
 
     // 创建表单
-    Form* form = new Form;
+    form = new Form;
     form->setLayout(Form::Layout::Vertical);
     form->setLabelPosition(Form::LabelPosition::Top);
     form->setLabelWidth(120);
@@ -62,16 +62,16 @@ LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
         FormItem(
             "loginCode",  // key
             FormItemType::Input,  // type
-            "考场序列号",  // label
-            "请输入考场序列号",  // placeholder
+            tr("考场序列号"),  // label
+            tr("请输入考场序列号"),  // placeholder
             true,  // required
             nullptr  // customWidgetFactory 为 nullptr，因为这是 Input 类型
         ),
         FormItem(
             "imageCode",  // key
             FormItemType::Custom,  // type
-            "验证码",  // label
-            "请输入验证码",  // placeholder（Custom 类型通常为空）
+            tr("验证码"),  // label
+            tr("请输入验证码"),  // placeholder（Custom 类型通常为空）
             true,  // required
             [&imageCodeLabel](QWidget* parent) -> QWidget* {  // customWidgetFactory
                 QWidget* w = new QWidget(parent);
@@ -91,7 +91,7 @@ LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
     };
 
     form->setupByConfig(items);
-    form->setSubmitText("考场注册");
+    form->setSubmitText(tr("考场注册"));
     formLayout->addWidget(form);
     formLayout->addStretch();
     mainLayout->addWidget(formWidget, 1);
@@ -120,7 +120,7 @@ LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
                 if (imageCodeLabel && pix.loadFromData(QByteArray::fromBase64(base64.toUtf8())) && !pix.isNull()) {
                     imageCodeLabel->setPixmap(pix.scaled(imageCodeLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
                 } else if (imageCodeLabel) {
-                    imageCodeLabel->setText("加载失败");
+                    imageCodeLabel->setText(tr("加载失败"));
                 }
             },
             [=](QString err) {
@@ -171,4 +171,4 @@ LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
             }
         );
     });
-} 
+}

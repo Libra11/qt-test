@@ -12,11 +12,13 @@
 #include <QtDebug>
 #include <QLabel>
 #include <QStackedWidget>
+#include <QTranslator>
 #include "components/IME/IMESelectorWidget.h"
 #include "helpers/AdminHelper.h"
 #include "helpers/HostsHelper.h"
 #include "helpers/ContentProtectionHelper.h"
 #include "helpers/SystemControlHelper.h"
+#include "helpers/LanguageManager.h"
 #include "helpers/UserHelper.h"
 #include "components/base/Button.h"
 #include "pages/HomePage.h"
@@ -56,6 +58,13 @@ int main(int argc, char *argv[])
         SystemControlHelper::EnableTaskManager();
     });
 
+    // 加载默认语言（可以保存配置决定默认用什么语言）
+    LanguageManager::instance()->loadLanguage("zh_CN");
+
+    // 语言切换时刷新主窗口标题
+    QObject::connect(LanguageManager::instance(), &LanguageManager::languageChanged, [&]() {
+        window.setWindowTitle(QObject::tr("国考云考试管理机"));
+    });
     window.show();
     return app.exec();
 }
