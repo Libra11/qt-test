@@ -20,7 +20,8 @@ class HomePage : public QWidget
     Q_OBJECT
 public:
     explicit HomePage(QWidget *parent = nullptr);
-
+signals:
+    void backToLoginPage();
 private:
     void setupUI();
     void setupConnections();

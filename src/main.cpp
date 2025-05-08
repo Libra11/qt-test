@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
     // 注册页面
     pageManager->registerPage("login", new LoginPage);
     pageManager->registerPage("settings", new SettingsPage);
+    pageManager->registerPage("home", new HomePage);
 
     // 主布局
     QVBoxLayout *mainLayout = new QVBoxLayout(&window);
@@ -54,11 +55,21 @@ int main(int argc, char *argv[])
         QObject::connect(loginPage, &LoginPage::loginSuccess, [pageManager]() {
             pageManager->switchTo("settings");
         });
+        QObject::connect(loginPage, &LoginPage::toHomePage, [pageManager]() {
+            pageManager->switchTo("home");
+        });
     }
 
     SettingsPage* settingsPage = qobject_cast<SettingsPage*>(pageManager->getPage("settings"));
     if (settingsPage) {
         QObject::connect(settingsPage, &SettingsPage::backToHome, [pageManager]() {
+            pageManager->switchTo("login");
+        });
+    }
+
+    HomePage* homePage = qobject_cast<HomePage*>(pageManager->getPage("home"));
+    if (homePage) {
+        QObject::connect(homePage, &HomePage::backToLoginPage, [pageManager]() {
             pageManager->switchTo("login");
         });
     }

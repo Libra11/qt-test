@@ -35,6 +35,7 @@ SOURCES += \
     src/components/form/FormInput.cpp \
     src/components/form/FormSelect.cpp \
     src/components/base/Select.cpp \
+    src/components/devtools/DataViewerPanel.cpp \
     src/mainwindow.cpp \
     src/pages/HomePage.cpp \
     src/pages/SettingsPage.cpp \
@@ -63,6 +64,7 @@ HEADERS += \
     include/components/form/FormValidation.h \
     include/components/form/FormLayoutManager.h \
     include/components/base/Select.h \
+    include/components/devtools/DataViewerPanel.h \
     include/components/form/FormItem.h \
     include/mainwindow.h \
     include/pages/HomePage.h \

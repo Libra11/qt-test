@@ -29,11 +29,18 @@ LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
     QLabel *imgLabel = new QLabel;
     imgLabel->setPixmap(QPixmap(":/icons/login_illustration.png").scaled(400, 400, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     imgLabel->setAlignment(Qt::AlignCenter);
-    mainLayout->addWidget(imgLabel, 1);
+    Button *testBtn = new Button("去主页");
+    mainLayout->addWidget(testBtn, 1);
+    QObject::connect(testBtn, &Button::clicked, [=]() {
+            emit(toHomePage());
+    });
+    //    mainLayout->addWidget(imgLabel, 1);
 
     // 右侧表单
     QWidget *formWidget = new QWidget;
     QVBoxLayout *formLayout = new QVBoxLayout(formWidget);
+
+    formLayout->addStretch();
 
     QLabel *logoLabel = new QLabel("<b>国考云考试管理机</b>");
     logoLabel->setAlignment(Qt::AlignCenter);

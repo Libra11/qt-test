@@ -11,6 +11,7 @@ public:
 
 signals:
     void loginSuccess();
+    void toHomePage();
 
 private:
     QString m_imageKey;
