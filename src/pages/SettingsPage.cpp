@@ -17,7 +17,7 @@
 #include "helpers/SystemControlHelper.h"
 #include "components/IME/IMESelectorWidget.h"
 
-SettingsPage::SettingsPage(QWidget *parent) : QWidget(parent)
+SettingsPage::SettingsPage(QWidget *parent) : PageBase(parent)
 {
     setupUI();
     setupConnections();
@@ -53,7 +53,7 @@ void SettingsPage::setupUI()
     adminBtn->setVariant(Button::Variant::Outline);
     adminLayout->addWidget(adminBtn);
     mainLayout->addWidget(adminGroup);
-    QObject::connect(adminBtn, &Button::clicked, this, [this]() {
+    QObject::connect(adminBtn, &Button::clicked, this, []() {
         AdminHelper::RequestAdminLoop();
     });
 
@@ -129,7 +129,7 @@ QObject::connect(enableBtn, &Button::clicked, this, [this]() {
     backLoginBtn->setVariant(Button::Variant::Outline);
     mainLayout->addWidget(backLoginBtn);
     QObject::connect(backLoginBtn, &Button::clicked, this, [this]() {
-        emit backToHome();
+        emit routeTo("home");
     });
 }
 

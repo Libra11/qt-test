@@ -5,7 +5,7 @@
 #include "helpers/SettingsHelper.h"
 #include <QDebug>
 
-HomePage::HomePage(QWidget *parent) : QWidget(parent)
+HomePage::HomePage(QWidget *parent) : PageBase(parent)
 {
     setupUI();
 }
@@ -45,6 +45,10 @@ void HomePage::setupUI()
     };
 
     items2[1].options = QStringList{ "男", "女", "保密" };
+    items2[0].validationRules.append({
+        [](const QString& val) { return val.contains("@"); },
+        "请输入有效的邮箱地址"
+    });
 
 
     form2->setupByConfig(items2);
@@ -94,7 +98,7 @@ void HomePage::setupUI()
 
     Button *backBtn = new Button("返回登录页");
     QObject::connect(backBtn,&Button::clicked, [=](){
-        emit(backToLoginPage());
+        emit routeTo("login");
     });
     mainLayout->addWidget(backBtn);
 

@@ -49,30 +49,6 @@ int main(int argc, char *argv[])
     // 启动时显示登录页
     pageManager->switchTo("login");
 
-    // 登录成功后跳转到设置页
-    LoginPage* loginPage = qobject_cast<LoginPage*>(pageManager->getPage("login"));
-    if (loginPage) {
-        QObject::connect(loginPage, &LoginPage::loginSuccess, [pageManager]() {
-            pageManager->switchTo("settings");
-        });
-        QObject::connect(loginPage, &LoginPage::toHomePage, [pageManager]() {
-            pageManager->switchTo("home");
-        });
-    }
-
-    SettingsPage* settingsPage = qobject_cast<SettingsPage*>(pageManager->getPage("settings"));
-    if (settingsPage) {
-        QObject::connect(settingsPage, &SettingsPage::backToHome, [pageManager]() {
-            pageManager->switchTo("login");
-        });
-    }
-
-    HomePage* homePage = qobject_cast<HomePage*>(pageManager->getPage("home"));
-    if (homePage) {
-        QObject::connect(homePage, &HomePage::backToLoginPage, [pageManager]() {
-            pageManager->switchTo("login");
-        });
-    }
 
     // 退出时恢复系统设置
     QObject::connect(&app, &QApplication::aboutToQuit, []() {

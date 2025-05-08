@@ -20,8 +20,9 @@
 #include "components/form/FormItem.h"
 #include "helpers/NetworkHelper.h"
 #include "helpers/SettingsHelper.h"
+#include "pages/PageBase.h"
 
-LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
+LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
 {
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
 
@@ -32,7 +33,7 @@ LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
     Button *testBtn = new Button("去主页");
     mainLayout->addWidget(testBtn, 1);
     QObject::connect(testBtn, &Button::clicked, [=]() {
-            emit(toHomePage());
+            emit routeTo("home");
     });
     //    mainLayout->addWidget(imgLabel, 1);
 
@@ -158,7 +159,7 @@ LoginPage::LoginPage(QWidget *parent) : QWidget(parent)
                     NetworkHelper::instance()->setToken(token);
                     // 持久化loginCode
                     SettingsHelper::setValue("loginCode", loginCode);
-                    emit loginSuccess();
+                    emit routeTo("settings");
                 } else {
                     QMessageBox::warning(this, "登录失败", obj["msg"].toString());
                     fetchImageCode();

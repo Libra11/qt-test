@@ -71,6 +71,7 @@ HEADERS += \
     include/pages/SettingsPage.h \
     include/pages/PageManager.h \
     include/pages/LoginPage.h \
+    include/pages/PageBase.h \
     include/helpers/NetworkHelper.h \
     include/api/ExamApi.h \
     include/components/base/ClickableLabel.h \

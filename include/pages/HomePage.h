@@ -14,14 +14,13 @@
 #include "components/base/Button.h"
 #include "components/form/Form.h"
 #include "components/form/FormItem.h"
+#include "PageBase.h"
 
-class HomePage : public QWidget
+class HomePage : public PageBase
 {
     Q_OBJECT
 public:
     explicit HomePage(QWidget *parent = nullptr);
-signals:
-    void backToLoginPage();
 private:
     void setupUI();
     void setupConnections();

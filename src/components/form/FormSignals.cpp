@@ -1,5 +1,6 @@
 #include "components/form/FormSignals.h"
 #include "components/form/FormValidation.h"
+#include "QDebug"
 
 void FormSignalHelper::handleValueChanged(Form* form) {
     form->m_isDirty = true;
@@ -33,12 +34,12 @@ void FormSignalHelper::handleSubmit(Form* form) {
     for (auto it = form->requiredFields.begin(); it != form->requiredFields.end(); ++it) {
         const QString& key = it.key();
         bool required = it.value();
-
         if (required && !form->inputs.contains(key) && !form->selects.contains(key)) {
             QWidget* customWidget = form->findChild<QWidget*>(key);
             if (customWidget) {
-                if (auto input = qobject_cast<Input*>(customWidget)) {
+                if (Input* input = form->findChild<Input*>(key)) {
                     QString val = input->text();
+                    qDebug() << key << required << customWidget << form->findChild<Input*>(key) << val;
                     if (!FormValidationHelper::validateField(form, key, val)) {
                         valid = false;
                     }

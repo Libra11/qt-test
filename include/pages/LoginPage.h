@@ -2,16 +2,13 @@
 #define LOGINPAGE_H
 
 #include <QWidget>
+#include "PageBase.h"
 
-class LoginPage : public QWidget
+class LoginPage : public PageBase
 {
     Q_OBJECT
 public:
     explicit LoginPage(QWidget *parent = nullptr);
-
-signals:
-    void loginSuccess();
-    void toHomePage();
 
 private:
     QString m_imageKey;

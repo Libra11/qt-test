@@ -42,8 +42,17 @@ void Form::setupFieldConnections(const QString& key, QWidget* widget) {
         connect(select, &Select::currentTextChanged, [this, key]() {
             FormValidationHelper::validateField(this, key, selects[key]->currentText());
         });
+    } else {
+        // ✅ 处理 customWidget, 目前只处理 Input
+        if (Input* customInput = widget->findChild<Input*>(key)) {
+            connect(customInput, &Input::textChanged, this, &Form::handleValueChanged);
+            connect(customInput, &Input::textChanged, [=]() {
+                FormValidationHelper::validateField(this, key, customInput->text());
+            });
+        }
     }
 }
+
 
 void Form::setSubmitText(const QString &text) {
     submitBtn->setText(text);

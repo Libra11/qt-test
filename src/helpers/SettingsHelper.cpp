@@ -1,3 +1,9 @@
+/*
+ * @Author: Libra
+ * @Date: 2025-05-06 16:39:22
+ * @LastEditors: Libra
+ * @Description: 
+ */
 #include "helpers/SettingsHelper.h"
 
 QSettings& SettingsHelper::instance()
