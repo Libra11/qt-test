@@ -37,7 +37,7 @@ void NetworkHelper::get(const QString& url, std::function<void(QJsonObject)> onS
     
     QNetworkRequest req(qUrl);
     if (!m_token.isEmpty()) {
-        req.setRawHeader("Authorization", m_token.toUtf8());
+        req.setRawHeader("Authorization", "Bearer "+ m_token.toUtf8());
     }
     QNetworkReply* reply = m_manager->get(req);
     QObject::connect(reply, &QNetworkReply::finished, [reply, onSuccess, onError]() {

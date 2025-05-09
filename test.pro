@@ -42,12 +42,14 @@ SOURCES += \
     src/pages/SettingsPage.cpp \
     src/pages/PageManager.cpp \
     src/pages/LoginPage.cpp \
+    src/pages/ExamCenterPage.cpp \
     src/helpers/NetworkHelper.cpp \
     src/helpers/LanguageManager.cpp \
     src/api/ExamApi.cpp \
     src/components/base/ClickableLabel.cpp \
     src/helpers/SettingsHelper.cpp \
-    src/helpers/DNSHelper.cpp
+    src/helpers/DNSHelper.cpp \
+    src/components/base/CardWidget.cpp
 
 HEADERS += \
     include/helpers/AdminHelper.h \
@@ -76,17 +78,19 @@ HEADERS += \
     include/pages/PageManager.h \
     include/pages/LoginPage.h \
     include/pages/PageBase.h \
+    include/pages/ExamCenterPage.h \
     include/helpers/NetworkHelper.h \
     include/helpers/LanguageManager.h \
     include/api/ExamApi.h \
     include/components/base/ClickableLabel.h \
     include/helpers/SettingsHelper.h \
-    include/helpers/DNSHelper.h
+    include/helpers/DNSHelper.h \
+    include/components/base/CardWidget.h
 
 FORMS += \
     mainwindow.ui
 
-TRANSLATIONS += \ 
+TRANSLATIONS += \
     i18n/translations/zh_CN.ts \
     i18n/translations/en.ts \
 

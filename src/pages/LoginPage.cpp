@@ -2,7 +2,7 @@
  * @Author: Libra
  * @Date: 2025-05-06 15:01:42
  * @LastEditors: Libra
- * @Description: 
+ * @Description:
  */
 #include "pages/LoginPage.h"
 #include <QHBoxLayout>
@@ -30,12 +30,31 @@ LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
     QLabel *imgLabel = new QLabel;
     imgLabel->setPixmap(QPixmap(":/icons/login_illustration.png").scaled(400, 400, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     imgLabel->setAlignment(Qt::AlignCenter);
-    Button *testBtn = new Button("去主页");
-    mainLayout->addWidget(testBtn, 1);
-    QObject::connect(testBtn, &Button::clicked, [=]() {
-            emit routeTo("home");
+
+    // 左侧按钮区域
+    QWidget *leftButtonsWidget = new QWidget;
+    QVBoxLayout *leftButtonsLayout = new QVBoxLayout(leftButtonsWidget);
+
+    Button *homeBtn = new Button("去主页");
+    QObject::connect(homeBtn, &Button::clicked, [=]() {
+        emit routeTo("home");
     });
-    //    mainLayout->addWidget(imgLabel, 1);
+
+    Button *examCenterBtn = new Button("考试中心");
+    examCenterBtn->setVariant(Button::Variant::Default);
+    QObject::connect(examCenterBtn, &Button::clicked, [=]() {
+        emit routeTo("examcenter");
+    });
+
+    leftButtonsLayout->addWidget(homeBtn);
+    leftButtonsLayout->addWidget(examCenterBtn);
+    leftButtonsLayout->addStretch();
+
+    QVBoxLayout *leftLayout = new QVBoxLayout;
+    leftLayout->addWidget(imgLabel);
+    leftLayout->addWidget(leftButtonsWidget);
+
+    mainLayout->addLayout(leftLayout, 1);
 
     // 右侧表单
     QWidget *formWidget = new QWidget;
@@ -156,11 +175,11 @@ LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
             [=](QJsonObject obj) {
                 if (obj["code"].toInt() == 0) {
                     // 存储token
-                    QString token = obj["data"].toObject()["token"].toString();
+                    QString token = obj["data"].toString();
                     NetworkHelper::instance()->setToken(token);
                     // 持久化loginCode
                     SettingsHelper::setValue("loginCode", loginCode);
-                    emit routeTo("settings");
+                    emit routeTo("examcenter");
                 } else {
                     CustomMessageBox::warning(this, "登录失败", obj["message"].toString());
                     fetchImageCode();
