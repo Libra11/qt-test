@@ -35,6 +35,7 @@ SOURCES += \
     src/components/form/FormInput.cpp \
     src/components/form/FormSelect.cpp \
     src/components/base/Select.cpp \
+    src/components/base/CustomMessageBox.cpp \
     src/components/devtools/DataViewerPanel.cpp \
     src/mainwindow.cpp \
     src/pages/HomePage.cpp \
@@ -45,7 +46,8 @@ SOURCES += \
     src/helpers/LanguageManager.cpp \
     src/api/ExamApi.cpp \
     src/components/base/ClickableLabel.cpp \
-    src/helpers/SettingsHelper.cpp
+    src/helpers/SettingsHelper.cpp \
+    src/helpers/DNSHelper.cpp
 
 HEADERS += \
     include/helpers/AdminHelper.h \
@@ -65,6 +67,7 @@ HEADERS += \
     include/components/form/FormValidation.h \
     include/components/form/FormLayoutManager.h \
     include/components/base/Select.h \
+    include/components/base/CustomMessageBox.h \
     include/components/devtools/DataViewerPanel.h \
     include/components/form/FormItem.h \
     include/mainwindow.h \
@@ -77,7 +80,8 @@ HEADERS += \
     include/helpers/LanguageManager.h \
     include/api/ExamApi.h \
     include/components/base/ClickableLabel.h \
-    include/helpers/SettingsHelper.h
+    include/helpers/SettingsHelper.h \
+    include/helpers/DNSHelper.h
 
 FORMS += \
     mainwindow.ui

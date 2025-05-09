@@ -2,23 +2,49 @@
  * @Author: Libra
  * @Date: 2025-05-03 13:55:09
  * @LastEditors: Libra
- * @Description: 
+ * @Description: Button component with icon and loading support
  */
 #include "components/base/Button.h"
 #include "components/base/ColorManager.h"
 #include <QStyle>
+#include <QHBoxLayout>
+#include <QApplication>
 
 Button::Button(QWidget *parent)
     : QPushButton(parent)
 {
-    setFixedHeight(50); // 默认高度 40px
+    setFixedHeight(50); // 默认高度 50px
+    setupLoadingAnimation();
     updateStyle();
 }
 
 Button::Button(const QString &text, QWidget *parent)
     : QPushButton(text, parent)
 {
-    setFixedHeight(50); // 默认高度 40px
+    m_originalText = text;
+    setFixedHeight(50); // 默认高度 50px
+    setupLoadingAnimation();
+    updateStyle();
+}
+
+Button::Button(const QIcon &icon, QWidget *parent)
+    : QPushButton(parent)
+{
+    m_originalIcon = icon;
+    setIcon(icon);
+    setFixedHeight(50);
+    setupLoadingAnimation();
+    updateStyle();
+}
+
+Button::Button(const QIcon &icon, const QString &text, QWidget *parent)
+    : QPushButton(text, parent)
+{
+    m_originalText = text;
+    m_originalIcon = icon;
+    setIcon(icon);
+    setFixedHeight(50);
+    setupLoadingAnimation();
     updateStyle();
 }
 
@@ -39,6 +65,79 @@ void Button::setDisabled(bool disabled)
     m_disabled = disabled;
     QPushButton::setEnabled(!disabled);
     updateStyle();
+}
+
+void Button::setButtonIcon(const QIcon &icon)
+{
+    m_originalIcon = icon;
+    if (!m_loading) {
+        setIcon(icon);
+    }
+    updateStyle();
+}
+
+void Button::setIconSize(const QSize &size)
+{
+    QPushButton::setIconSize(size);
+}
+
+void Button::setLoading(bool loading)
+{
+    if (m_loading == loading) {
+        return;
+    }
+
+    m_loading = loading;
+
+    if (loading) {
+        // Save current text and icon
+        if (m_originalText.isEmpty()) {
+            m_originalText = text();
+        }
+        if (m_originalIcon.isNull() && !icon().isNull()) {
+            m_originalIcon = icon();
+        }
+
+        // Show loading animation
+        if (m_loadingAnimation) {
+            m_loadingAnimation->start();
+            if (m_loadingIconLabel) {
+                m_loadingIconLabel->show();
+            }
+        }
+
+        // Keep text but add space for the loading icon
+        if (m_size != Size::Icon) {
+            setText(" " + m_originalText); // Add space for the loading icon
+        } else {
+            setText("");
+        }
+
+        // Hide the original icon during loading
+        setIcon(QIcon());
+    } else {
+        // Restore original text and icon
+        setText(m_originalText);
+        if (!m_originalIcon.isNull()) {
+            setIcon(m_originalIcon);
+        }
+
+        // Stop loading animation
+        if (m_loadingAnimation) {
+            m_loadingAnimation->stop();
+            if (m_loadingIconLabel) {
+                m_loadingIconLabel->hide();
+            }
+        }
+    }
+
+    updateLoadingAnimation();
+    updateStyle();
+}
+
+bool Button::isLoading() const
+{
+    return m_loading;
 }
 
 void Button::updateStyle()
@@ -153,4 +252,63 @@ QString Button::getSizeClass() const
         default:
             return "";
     }
-} 
+}
+
+void Button::setupLoadingAnimation()
+{
+    // Create loading label if it doesn't exist
+    if (!m_loadingIconLabel) {
+        m_loadingIconLabel = new QLabel(this);
+        m_loadingIconLabel->setFixedSize(16, 16);
+        m_loadingIconLabel->setScaledContents(true);
+        m_loadingIconLabel->hide(); // Hide by default
+
+        // Create loading animation
+        m_loadingAnimation = new QMovie(":/icons/loading.svg", QByteArray(), this);
+        m_loadingAnimation->setScaledSize(QSize(16, 16));
+        m_loadingIconLabel->setMovie(m_loadingAnimation);
+
+        // Set the color of the loading icon to match the button text color
+        QString styleSheet = QString("QLabel { background-color: transparent; }");
+        m_loadingIconLabel->setStyleSheet(styleSheet);
+    }
+}
+
+void Button::updateLoadingAnimation()
+{
+    if (!m_loadingIconLabel) {
+        return;
+    }
+
+    if (m_loading) {
+        // Position the loading icon
+        QSize iconSize(16, 16);
+
+        if (m_size == Size::Sm) {
+            iconSize = QSize(12, 12);
+        } else if (m_size == Size::Lg) {
+            iconSize = QSize(20, 20);
+        }
+
+        m_loadingAnimation->setScaledSize(iconSize);
+        m_loadingIconLabel->setFixedSize(iconSize);
+
+        // Position the loading icon
+        int x, y;
+
+        if (m_size == Size::Icon) {
+            // Center the icon for icon-only buttons
+            x = (width() - iconSize.width()) / 2;
+            y = (height() - iconSize.height()) / 2;
+        } else {
+            // Position the icon to the left of the text
+            x = 12; // Left padding
+            y = (height() - iconSize.height()) / 2;
+        }
+
+        m_loadingIconLabel->move(x, y);
+        m_loadingIconLabel->show();
+    } else {
+        m_loadingIconLabel->hide();
+    }
+}

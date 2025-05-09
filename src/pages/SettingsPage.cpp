@@ -15,6 +15,7 @@
 #include "helpers/HostsHelper.h"
 #include "helpers/ContentProtectionHelper.h"
 #include "helpers/SystemControlHelper.h"
+#include "helpers/DNSHelper.h"
 #include "components/IME/IMESelectorWidget.h"
 
 SettingsPage::SettingsPage(QWidget *parent) : PageBase(parent)
@@ -60,7 +61,7 @@ void SettingsPage::setupUI()
     // 3. hosts管理区
     QGroupBox *hostsGroup = new QGroupBox("hosts管理");
     QVBoxLayout *hostsLayout = new QVBoxLayout(hostsGroup);
-    Button *addBtn = new Button("添加hosts记录（屏蔽百度）");
+    Button *addBtn = new Button("添加hosts记录（屏蔽QQ输入法AI）");
     Button *removeBtn = new Button("删除hosts中的记录");
     addBtn->setVariant(Button::Variant::Secondary);
     removeBtn->setVariant(Button::Variant::Destructive);
@@ -69,14 +70,14 @@ void SettingsPage::setupUI()
     mainLayout->addWidget(hostsGroup);
     QObject::connect(addBtn, &Button::clicked, this, [this]() {
         if (HostsHelper::AddHostsEntry()) {
-            QMessageBox::information(this, "成功", "已成功添加屏蔽百度的hosts记录！");
+            QMessageBox::information(this, "成功", "已成功添加屏蔽QQ输入法的hosts记录！");
         } else {
             QMessageBox::critical(this, "失败", "添加hosts记录失败！");
         }
     });
     QObject::connect(removeBtn, &Button::clicked, this, [this]() {
         if (HostsHelper::RemoveHostsEntry()) {
-            QMessageBox::information(this, "成功", "已删除hosts中的百度记录！");
+            QMessageBox::information(this, "成功", "已删除hosts中的QQ记录！");
         } else {
             QMessageBox::critical(this, "失败", "删除hosts记录失败！");
         }
@@ -96,6 +97,32 @@ void SettingsPage::setupUI()
         ContentProtectionHelper::setContentProtection(mainWin, enabled);
         protectBtn->setText(enabled ? "禁用内容保护" : "启用内容保护");
     });
+
+    QGroupBox *dnsGroup = new QGroupBox("DNS断外网管理");
+    QVBoxLayout *dnsLayout = new QVBoxLayout(dnsGroup);
+    Button *blockBtn = new Button("一键断外网");
+    Button *restoreBtn = new Button("恢复DNS");
+    blockBtn->setVariant(Button::Variant::Destructive);
+    restoreBtn->setVariant(Button::Variant::Secondary);
+    dnsLayout->addWidget(blockBtn);
+    dnsLayout->addWidget(restoreBtn);
+    mainLayout->addWidget(dnsGroup);
+
+    QObject::connect(blockBtn, &Button::clicked, this, [this]() {
+        if (DNSHelper::EnableDnsBlock()) {
+            QMessageBox::information(this, "成功", "已成功断外网！");
+        } else {
+            QMessageBox::critical(this, "失败", "断外网失败！");
+        }
+    });
+    QObject::connect(restoreBtn, &Button::clicked, this, [this]() {
+        if (DNSHelper::DisableDnsBlock()) {
+            QMessageBox::information(this, "成功", "已恢复DNS！");
+        } else {
+            QMessageBox::critical(this, "失败", "恢复DNS失败！");
+        }
+    });
+
 
     // 5. 系统控制区
     QGroupBox *sysGroup = new QGroupBox("系统控制");

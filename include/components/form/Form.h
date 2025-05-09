@@ -34,6 +34,10 @@ public:
     void setValues(const QMap<QString, QString>& values);
     void setDisabled(const QString& key, bool disabled);
     void addValidationRule(const QString& key, const FormValidationRule& rule);
+
+    // Loading state methods
+    void setLoading(bool loading);
+    bool isLoading() const;
     Layout m_layout = Layout::Vertical;
     LabelPosition m_labelPosition = LabelPosition::Top;
     int m_labelWidth = 100;

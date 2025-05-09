@@ -2,7 +2,7 @@
  * @Author: Libra
  * @Date: 2025-05-06 13:48:43
  * @LastEditors: Libra
- * @Description: 
+ * @Description:
  */
 #ifndef FORMITEM_H
 #define FORMITEM_H
@@ -15,6 +15,7 @@
 // 表单项类型枚举
 enum class FormItemType {
     Input,
+    Password,  // 添加密码输入类型
     Select,
     Custom
 };

@@ -9,7 +9,6 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QPixmap>
-#include <QMessageBox>
 #include <QUrl>
 #include "components/base/Input.h"
 #include "components/base/Button.h"
@@ -18,6 +17,7 @@
 #include "components/base/ClickableLabel.h"
 #include "components/form/Form.h"
 #include "components/form/FormItem.h"
+#include "components/base/CustomMessageBox.h"
 #include "helpers/NetworkHelper.h"
 #include "helpers/SettingsHelper.h"
 #include "pages/PageBase.h"
@@ -61,7 +61,7 @@ LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
     QList<FormItem> items = {
         FormItem(
             "loginCode",  // key
-            FormItemType::Input,  // type
+            FormItemType::Password,  // type
             tr("考场序列号"),  // label
             tr("请输入考场序列号"),  // placeholder
             true,  // required
@@ -142,6 +142,7 @@ LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
 
     // 表单提交
     QObject::connect(form, &Form::submitted, [=](const QMap<QString, QString>& values) {
+        form->setLoading(true);
         QString loginCode = values.value("loginCode").trimmed();
         QString imageCode;
         // 获取自定义控件中的输入框内容
@@ -161,12 +162,14 @@ LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
                     SettingsHelper::setValue("loginCode", loginCode);
                     emit routeTo("settings");
                 } else {
-                    QMessageBox::warning(this, "登录失败", obj["msg"].toString());
+                    CustomMessageBox::warning(this, "登录失败", obj["message"].toString());
                     fetchImageCode();
                 }
+                form->setLoading(false);
             },
             [=](QString err) {
-                QMessageBox::warning(this, "网络错误", err);
+                form->setLoading(false);
+                CustomMessageBox::warning(this, "网络错误", err);
                 fetchImageCode();
             }
         );

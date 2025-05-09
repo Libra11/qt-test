@@ -8,7 +8,7 @@ void FormSignalHelper::handleValueChanged(Form* form) {
 }
 
 void FormSignalHelper::handleSubmit(Form* form) {
-    emit form->beforeSubmit();
+    // Note: beforeSubmit is now emitted in Form::handleSubmit before setting loading state
 
     bool valid = true;
     QMap<QString, QString> values;
@@ -49,9 +49,16 @@ void FormSignalHelper::handleSubmit(Form* form) {
         }
     }
 
-    if (valid) {
-        emit form->submitted(values);
-        emit form->afterSubmit();
-        form->m_isDirty = false;
+    if (!valid) {
+        // If validation fails, stop loading state
+        form->setLoading(false);
+        return;
     }
+
+    // If validation passes, emit submitted signal
+    // Note: The form will remain in loading state until the consumer calls setLoading(false)
+    emit form->submitted(values);
+
+    // Note: afterSubmit is now emitted in Form::setLoading when loading is set to false
+    form->m_isDirty = false;
 }

@@ -1,12 +1,20 @@
 // FormInput.cpp
 #include "components/form/FormInput.h"
 
-void FormInputHelper::addInput(Form* form, const QString& key, const QString& placeholder) {
+void FormInputHelper::addInput(Form* form, const QString& key, const QString& placeholder, FormItemType type) {
     QLabel* label = new QLabel(key, form);
     form->fieldLabels[key] = label;
 
     Input* input = new Input();
     input->setPlaceholder(placeholder);
+
+    // Set input type based on FormItemType
+    if (type == FormItemType::Password) {
+        input->setType(Input::Type::Password);
+    } else {
+        input->setType(Input::Type::Text);
+    }
+
     form->inputs[key] = input;
     form->requiredFields[key] = false;
     form->m_fieldOrder.append(key);

@@ -11,10 +11,10 @@ bool HostsHelper::AddHostsEntry()
     QTextStream in(&file);
     QString content = in.readAll();
 
-    if (!content.contains("www.baidu.com"))
+    if (!content.contains("sec.sginput.qq.com"))
     {
         in.seek(file.size());
-        in << "\n127.0.0.123 www.baidu.com\n";
+        in << "\n127.0.0.123 sec.sginput.qq.com\n";
     }
 
     file.close();
@@ -34,7 +34,7 @@ bool HostsHelper::RemoveHostsEntry()
     QString newContent;
     for (const QString &line : lines)
     {
-        if (!line.contains("www.baidu.com"))
+        if (!line.contains("sec.sginput.qq.com"))
             newContent += line + "\n";
     }
 

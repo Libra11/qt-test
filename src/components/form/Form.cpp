@@ -2,7 +2,7 @@
  * @Author: Libra
  * @Date: 2025-05-06 13:48:43
  * @LastEditors: Libra
- * @Description: 
+ * @Description:
  */
 #include "components/form/Form.h"
 #include "components/form/FormInput.h"
@@ -24,7 +24,17 @@ Form::Form(QWidget *parent) : QWidget(parent) {
 }
 
 void Form::handleSubmit() {
+    // Set loading state before submitting
+    setLoading(true);
+
+    // Emit beforeSubmit signal
+    emit beforeSubmit();
+
+    // Handle form submission
     FormSignalHelper::handleSubmit(this);
+
+    // Note: The loading state should be turned off by the consumer of the form
+    // after the async operation completes, by calling setLoading(false)
 }
 
 void Form::handleValueChanged() {
@@ -117,7 +127,10 @@ void Form::setupByConfig(const QList<FormItem>& items) {
     for (const auto& item : items) {
         switch (item.type) {
             case FormItemType::Input:
-                FormInputHelper::addInput(this, item.key, item.placeholder);
+                FormInputHelper::addInput(this, item.key, item.placeholder, FormItemType::Input);
+                break;
+            case FormItemType::Password:
+                FormInputHelper::addInput(this, item.key, item.placeholder, FormItemType::Password);
                 break;
             case FormItemType::Select:
                 FormSelectHelper::addSelect(this, item.key, item.options, item.placeholder);
@@ -166,6 +179,31 @@ void Form::setRequired(const QString& key, bool required) {
             fieldLabels[key]->setText(labelText);
         }
     }
+}
+
+void Form::setLoading(bool loading) {
+    // Set the submit button loading state
+    if (submitBtn) {
+        submitBtn->setLoading(loading);
+    }
+
+    // Disable all inputs and selects while loading
+    for (auto it = inputs.begin(); it != inputs.end(); ++it) {
+        it.value()->setEnabled(!loading);
+    }
+
+    for (auto it = selects.begin(); it != selects.end(); ++it) {
+        it.value()->setEnabled(!loading);
+    }
+
+    // Emit afterSubmit signal when loading is complete
+    if (!loading) {
+        emit afterSubmit();
+    }
+}
+
+bool Form::isLoading() const {
+    return submitBtn ? submitBtn->isLoading() : false;
 }
 
 
