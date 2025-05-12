@@ -1,9 +1,9 @@
 #include "components/base/TagSelect.h"
 #include "layout/FlowLayout.h"
-#include <QPushButton>
-#include <QStyle>
+#include <QDebug>
 
-TagSelect::TagSelect(QWidget *parent) : QWidget(parent)
+TagSelect::TagSelect(QWidget *parent)
+    : QWidget(parent)
 {
     m_layout = new FlowLayout(this, 0, 6, 6);
     setLayout(m_layout);
@@ -11,15 +11,32 @@ TagSelect::TagSelect(QWidget *parent) : QWidget(parent)
 
 void TagSelect::setOptions(const QStringList &options)
 {
-    // 清除旧的
-    qDeleteAll(m_buttonMap.keys());
+    // 清除旧按钮
+    QLayoutItem *child;
+    while ((child = m_layout->takeAt(0)) != nullptr) {
+        if (child->widget()) {
+            child->widget()->deleteLater();
+        }
+        delete child;
+    }
     m_buttonMap.clear();
 
+    // 添加新按钮
     for (const QString &opt : options) {
         QPushButton *btn = new QPushButton(opt, this);
         btn->setCheckable(true);
-        btn->setStyleSheet("QPushButton { border: 1px solid gray; border-radius: 4px; padding: 4px; }"
-                           "QPushButton:checked { background-color: #0078D7; color: white; }");
+        btn->setStyleSheet(R"(
+            QPushButton {
+                border: 1px solid gray;
+                border-radius: 4px;
+                padding: 4px 8px;
+                background-color: #f0f0f0;
+            }
+            QPushButton:checked {
+                background-color: #0078D7;
+                color: white;
+            }
+        )");
         connect(btn, &QPushButton::clicked, this, &TagSelect::onTagClicked);
         m_buttonMap.insert(btn, opt);
         m_layout->addWidget(btn);
@@ -46,5 +63,10 @@ void TagSelect::clearSelection()
 
 void TagSelect::onTagClicked()
 {
-    emit selectionChanged(selectedOptions());
+    QPushButton *btn = qobject_cast<QPushButton*>(sender());
+    if (!btn) return;
+
+    QStringList current = selectedOptions();
+    qDebug() << "Selected options:" << current;
+    emit selectionChanged(current);
 }

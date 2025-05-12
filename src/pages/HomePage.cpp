@@ -427,7 +427,8 @@ void HomePage::setupUI()
 
     QLabel *label = new QLabel("已选项：");
 
-    QObject::connect(tagSelect, &TagSelect::selectionChanged, [&label](const QStringList &items) {
+    // 使用指针捕获而不是引用捕获
+    QObject::connect(tagSelect, &TagSelect::selectionChanged, [label](const QStringList &items) {
         label->setText("已选项：" + items.join(", "));
     });
 
