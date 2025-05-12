@@ -1,15 +1,15 @@
-#ifndef SELECT_H
-#define SELECT_H
+#ifndef DROPDOWN_H
+#define DROPDOWN_H
 
 #include <QComboBox>
 #include <QString>
 #include <QWidget>
 #include <QVariant>
 
-class Select : public QComboBox {
+class DropDown : public QComboBox {
     Q_OBJECT
 public:
-    explicit Select(QWidget *parent = nullptr);
+    explicit DropDown(QWidget *parent = nullptr);
 
     // 添加选项
     void addOption(const QString &text, const QVariant &value = QVariant());
@@ -19,4 +19,4 @@ public:
     QVariant value() const;
 };
 
-#endif // SELECT_H 
+#endif // DROPDOWN_H 

@@ -38,8 +38,6 @@ CardWidget::CardWidget(QWidget *parent) : QWidget(parent) {
     iconLabel = new QLabel;
     iconLabel->setFixedSize(100, 100);
     iconLabel->setScaledContents(true);
-    iconLabel->setFrameStyle(QFrame::NoFrame); // 禁用QFrame样式
-    iconLabel->setStyleSheet("border: none;"); // 禁用样式边框
 
     titleLabel = new QLabel("标题");
     titleLabel->setObjectName("titleLabel");
@@ -47,10 +45,6 @@ CardWidget::CardWidget(QWidget *parent) : QWidget(parent) {
     descLabel = new QLabel("描述内容");
     descLabel->setWordWrap(true);
     descLabel->setObjectName("descLabel");
-    titleLabel->setFrameStyle(QFrame::NoFrame); // 禁用QFrame样式
-    titleLabel->setStyleSheet("border: none;"); // 禁用样式边框
-    descLabel->setFrameStyle(QFrame::NoFrame); // 禁用QFrame样式
-    descLabel->setStyleSheet("border: none;"); // 禁用样式边框
 
     QVBoxLayout *textLayout = new QVBoxLayout;
     textLayout->addWidget(titleLabel);
@@ -95,3 +89,10 @@ void CardWidget::paintEvent(QPaintEvent *event) {
     p.setRenderHint(QPainter::Antialiasing);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
+void CardWidget::mousePressEvent(QMouseEvent *event) {
+  if (event->button() == Qt::LeftButton) {
+      emit clicked();
+  }
+  QWidget::mousePressEvent(event); // 保持默认行为
+}
+

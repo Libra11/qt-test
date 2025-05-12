@@ -18,7 +18,7 @@
 #include <initguid.h>
 #include "components/base/Button.h"
 #include "components/base/Input.h"
-#include "components/base/Select.h"
+#include "components/base/DropDown.h"
 
 enum IMEType { TSF_IME, IMM_IME };
 
@@ -107,7 +107,7 @@ IMESelectorWidget::IMESelectorWidget(QWidget* parent)
     : QWidget(parent)
 {
     auto d = new IMESelectorWidgetPrivate;
-    auto* comboBox     = new Select;
+    auto* comboBox     = new DropDown;
     auto* switchButton = new Button("切换输入法");
     auto* testEdit     = new Input;
     testEdit->setPlaceholderText("在这里测试输入法切换效果…");

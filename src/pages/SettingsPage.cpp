@@ -156,7 +156,7 @@ QObject::connect(enableBtn, &Button::clicked, this, [this]() {
     backLoginBtn->setVariant(Button::Variant::Outline);
     mainLayout->addWidget(backLoginBtn);
     QObject::connect(backLoginBtn, &Button::clicked, this, [this]() {
-        emit routeTo("home");
+        emit routeTo("login");
     });
 }
 

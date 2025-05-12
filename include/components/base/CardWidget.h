@@ -1,9 +1,3 @@
-/*
- * @Author: Libra
- * @Date: 2025-05-09 14:59:30
- * @LastEditors: Libra
- * @Description: 
- */
 #ifndef CARDWIDGET_H
 #define CARDWIDGET_H
 
@@ -13,6 +7,7 @@
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QPixmap>
+#include <QMouseEvent>
 
 class CardWidget : public QWidget {
     Q_OBJECT
@@ -24,7 +19,11 @@ public:
     void setDescription(const QString &desc);
 
 protected:
-    void paintEvent(QPaintEvent *) override;
+    void paintEvent(QPaintEvent *event) override;
+signals:
+    void clicked();
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     QLabel *iconLabel;

@@ -26,6 +26,7 @@
 #include "pages/PageManager.h"
 #include "pages/LoginPage.h"
 #include "pages/ExamCenterPage.h"
+#include "pages/ExamManagementPage.h"
 
 int main(int argc, char *argv[])
 {
@@ -40,8 +41,7 @@ int main(int argc, char *argv[])
             background: #ffffff;
          }
     )");
-    window.resize(1200, 700);
-
+    window.resize(1920, 1080);
     // 创建堆叠窗口部件用于页面切换
     QStackedWidget *stackedWidget = new QStackedWidget(&window);
     PageManager *pageManager = new PageManager(stackedWidget);
@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
     pageManager->registerPage("settings", new SettingsPage);
     pageManager->registerPage("home", new HomePage);
     pageManager->registerPage("examcenter", new ExamCenterPage);
+    pageManager->registerPage("exammanagement", new ExamManagementPage);
 
     // 主布局
     QVBoxLayout *mainLayout = new QVBoxLayout(&window);

@@ -148,6 +148,12 @@ void ExamCenterPage::createExamStagesSection()
     card->setIcon(":/icons/arrow.svg");
     card->setTitle("考前封场");
     card->setDescription("考试机管理：注册、编排、管理考试机\n考前准备：机位数、版本、摄像头检测、试考、封场");
+    
+    // 添加点击事件，跳转到考试管理页面
+    card->setCursor(Qt::PointingHandCursor);
+    connect(card, &CardWidget::clicked, [this]() {
+        emit routeTo("exammanagement");
+    });
 
     CardWidget *card2 = new CardWidget;
     card2->setIcon(":/icons/arrow.svg");
@@ -259,3 +265,5 @@ void ExamCenterPage::updateUIWithSiteAndRoomInfo()
         m_examCapacityValue->setText(QString::number(m_roomInfo.available) + "台");
     }
 }
+
+

@@ -22,7 +22,7 @@ void FormSignalHelper::handleSubmit(Form* form) {
         values[key] = val;
     }
 
-    for (auto it = form->selects.begin(); it != form->selects.end(); ++it) {
+    for (auto it = form->dropDowns.begin(); it != form->dropDowns.end(); ++it) {
         QString key = it.key();
         QString val = it.value()->currentText();
         if (!FormValidationHelper::validateField(form, key, val)) {
@@ -34,7 +34,7 @@ void FormSignalHelper::handleSubmit(Form* form) {
     for (auto it = form->requiredFields.begin(); it != form->requiredFields.end(); ++it) {
         const QString& key = it.key();
         bool required = it.value();
-        if (required && !form->inputs.contains(key) && !form->selects.contains(key)) {
+        if (required && !form->inputs.contains(key) && !form->dropDowns.contains(key)) {
             QWidget* customWidget = form->findChild<QWidget*>(key);
             if (customWidget) {
                 if (Input* input = form->findChild<Input*>(key)) {

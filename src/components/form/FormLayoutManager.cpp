@@ -36,8 +36,8 @@ void FormLayoutManager::updateLayout(Form* form) {
 
                 if (form->inputs.contains(key)) {
                     widget = form->inputs[key];
-                } else if (form->selects.contains(key)) {
-                    widget = form->selects[key];
+                } else if (form->dropDowns.contains(key)) {
+                    widget = form->dropDowns[key];
                 } else {
                     widget = form->findChild<QWidget*>(key);
                 }
@@ -76,8 +76,8 @@ void FormLayoutManager::updateLayout(Form* form) {
 
                 if (form->inputs.contains(key)) {
                     widget = form->inputs[key];
-                } else if (form->selects.contains(key)) {
-                    widget = form->selects[key];
+                } else if (form->dropDowns.contains(key)) {
+                    widget = form->dropDowns[key];
                 } else {
                     widget = form->findChild<QWidget*>(key);
                 }

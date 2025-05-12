@@ -7,6 +7,7 @@
 #include "components/devtools/DataViewerPanel.h"
 #include "components/base/CustomMessageBox.h"
 #include "helpers/SettingsHelper.h"
+#include "components/base/TagSelect.h"
 #include <QDebug>
 
 HomePage::HomePage(QWidget *parent) : PageBase(parent)
@@ -417,6 +418,22 @@ void HomePage::setupUI()
     messageBoxLayout->addWidget(messageBoxHelpText);
 
     mainLayout->addWidget(messageBoxGroupBox);
+
+
+    QGroupBox *tagSelectGroupBox = new QGroupBox("密码输入框示例");
+    QVBoxLayout *tagSelectLayout = new QVBoxLayout(tagSelectGroupBox);
+    TagSelect *tagSelect = new TagSelect;
+    tagSelect->setOptions(QStringList() << "Option A" << "Option B" << "Option C" << "Option D" << "Option E");
+
+    QLabel *label = new QLabel("已选项：");
+
+    QObject::connect(tagSelect, &TagSelect::selectionChanged, [&label](const QStringList &items) {
+        label->setText("已选项：" + items.join(", "));
+    });
+
+    tagSelectLayout->addWidget(tagSelect);
+    tagSelectLayout->addWidget(label);
+    mainLayout->addWidget(tagSelectGroupBox);
 
     // 返回按钮
     Button *backBtn = new Button(QIcon(":/icons/arrow.svg"), "返回登录页");

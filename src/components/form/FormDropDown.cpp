@@ -1,18 +1,18 @@
-// FormSelect.cpp
-#include "components/form/FormSelect.h"
+// FormDropDown.cpp
+#include "components/form/FormDropDown.h"
 
-void FormSelectHelper::addSelect(Form* form, const QString& key, const QStringList& options, const QString& placeholder) {
+void FormDropDownHelper::addDropDown(Form* form, const QString& key, const QStringList& options, const QString& placeholder) {
     QLabel* label = new QLabel(key, form);
     form->fieldLabels[key] = label;
 
-    Select* select = new Select();
+    DropDown* dropDown = new DropDown();
     if (!placeholder.isEmpty()) {
-        select->addOption(placeholder, "");
+        dropDown->addOption(placeholder, "");
     }
     for (const auto& opt : options) {
-        select->addOption(opt, opt);
+        dropDown->addOption(opt, opt);
     }
-    form->selects[key] = select;
+    form->dropDowns[key] = dropDown;
     form->requiredFields[key] = false;
     form->m_fieldOrder.append(key);
 
@@ -23,6 +23,6 @@ void FormSelectHelper::addSelect(Form* form, const QString& key, const QStringLi
 
     form->initialValues[key] = "";
 
-    form->setupFieldConnections(key, select);
+    form->setupFieldConnections(key, dropDown);
     form->updateLayout();
 }

@@ -1,5 +1,5 @@
-// Select.cpp
-#include "components/base/Select.h"
+// DropDown.cpp
+#include "components/base/DropDown.h"
 #include "components/base/ColorManager.h"
 
 #include <QListView>
@@ -14,7 +14,7 @@ namespace {
             : QStyledItemDelegate(parent),
               m_left(12), m_top(4), m_right(12), m_bottom(4)
         {
-            // 放在 Select 的构造函数里，setView 之前
+            // 放在 DropDown 的构造函数里，setView 之前
             QPixmap pm(":/icons/arrow.svg");
             // 父控件是 QListView，想同步它的字体
             if (auto *lv = qobject_cast<QListView*>(parent)) {
@@ -73,7 +73,7 @@ namespace {
     };
 }
 
-Select::Select(QWidget *parent)
+DropDown::DropDown(QWidget *parent)
     : QComboBox(parent)
 {
     setMinimumHeight(50);
@@ -124,19 +124,19 @@ QListView {
          ColorManager::outline()));
 }
 
-void Select::addOption(const QString &text, const QVariant &value)
+void DropDown::addOption(const QString &text, const QVariant &value)
 {
     addItem(text, value);
 }
 
-void Select::setValue(const QVariant &value)
+void DropDown::setValue(const QVariant &value)
 {
     int idx = findData(value);
     if (idx >= 0)
         setCurrentIndex(idx);
 }
 
-QVariant Select::value() const
+QVariant DropDown::value() const
 {
     return currentData();
 }

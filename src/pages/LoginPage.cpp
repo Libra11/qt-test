@@ -40,14 +40,14 @@ LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
         emit routeTo("home");
     });
 
-    Button *examCenterBtn = new Button("考试中心");
-    examCenterBtn->setVariant(Button::Variant::Default);
-    QObject::connect(examCenterBtn, &Button::clicked, [=]() {
-        emit routeTo("examcenter");
+    Button *settingsBtn = new Button("设置页面");
+    settingsBtn->setVariant(Button::Variant::Default);
+    QObject::connect(settingsBtn, &Button::clicked, [=]() {
+        emit routeTo("settings");
     });
 
     leftButtonsLayout->addWidget(homeBtn);
-    leftButtonsLayout->addWidget(examCenterBtn);
+    leftButtonsLayout->addWidget(settingsBtn);
     leftButtonsLayout->addStretch();
 
     QVBoxLayout *leftLayout = new QVBoxLayout;

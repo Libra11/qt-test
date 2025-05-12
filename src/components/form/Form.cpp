@@ -6,7 +6,7 @@
  */
 #include "components/form/Form.h"
 #include "components/form/FormInput.h"
-#include "components/form/FormSelect.h"
+#include "components/form/FormDropDown.h"
 #include "components/form/FormCustomWidget.h"
 #include "components/form/FormLayoutManager.h"
 #include "components/form/FormValidation.h"
@@ -47,10 +47,10 @@ void Form::setupFieldConnections(const QString& key, QWidget* widget) {
         connect(input, &Input::textChanged, [this, key]() {
             FormValidationHelper::validateField(this, key, inputs[key]->text());
         });
-    } else if (auto select = qobject_cast<Select*>(widget)) {
-        connect(select, &Select::currentTextChanged, this, &Form::handleValueChanged);
-        connect(select, &Select::currentTextChanged, [this, key]() {
-            FormValidationHelper::validateField(this, key, selects[key]->currentText());
+    } else if (auto select = qobject_cast<DropDown*>(widget)) {
+        connect(select, &DropDown::currentTextChanged, this, &Form::handleValueChanged);
+        connect(select, &DropDown::currentTextChanged, [this, key]() {
+            FormValidationHelper::validateField(this, key, dropDowns[key]->currentText());
         });
     } else {
         // ✅ 处理 customWidget, 目前只处理 Input
@@ -95,7 +95,7 @@ void Form::reset() {
         it.value()->setError(false);
     }
 
-    for (auto it = selects.begin(); it != selects.end(); ++it) {
+    for (auto it = dropDowns.begin(); it != dropDowns.end(); ++it) {
         it.value()->setCurrentText(initialValues[it.key()]);
     }
 
@@ -113,8 +113,8 @@ void Form::setValues(const QMap<QString, QString>& values) {
 
         if (inputs.contains(key)) {
             inputs[key]->setText(value);
-        } else if (selects.contains(key)) {
-            selects[key]->setCurrentText(value);
+        } else if (dropDowns.contains(key)) {
+            dropDowns[key]->setCurrentText(value);
         }
     }
 }
@@ -132,8 +132,8 @@ void Form::setupByConfig(const QList<FormItem>& items) {
             case FormItemType::Password:
                 FormInputHelper::addInput(this, item.key, item.placeholder, FormItemType::Password);
                 break;
-            case FormItemType::Select:
-                FormSelectHelper::addSelect(this, item.key, item.options, item.placeholder);
+            case FormItemType::DropDown:
+                FormDropDownHelper::addDropDown(this, item.key, item.options, item.placeholder);
                 break;
             case FormItemType::Custom:
                 FormCustomWidgetHelper::addCustomWidget(this, item);
@@ -162,8 +162,8 @@ void Form::updateLayout() {
 void Form::setDisabled(const QString& key, bool disabled) {
     if (inputs.contains(key)) {
         inputs[key]->setEnabled(!disabled);
-    } else if (selects.contains(key)) {
-        selects[key]->setEnabled(!disabled);
+    } else if (dropDowns.contains(key)) {
+        dropDowns[key]->setEnabled(!disabled);
     }
 }
 
@@ -192,7 +192,7 @@ void Form::setLoading(bool loading) {
         it.value()->setEnabled(!loading);
     }
 
-    for (auto it = selects.begin(); it != selects.end(); ++it) {
+    for (auto it = dropDowns.begin(); it != dropDowns.end(); ++it) {
         it.value()->setEnabled(!loading);
     }
 

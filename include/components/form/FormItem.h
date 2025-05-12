@@ -16,7 +16,7 @@
 enum class FormItemType {
     Input,
     Password,  // 添加密码输入类型
-    Select,
+    DropDown,
     Custom
 };
 

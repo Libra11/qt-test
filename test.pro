@@ -18,12 +18,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += include
 
 SOURCES += \
+    src/components/base/TagSelect.cpp \
     src/helpers/AdminHelper.cpp \
     src/helpers/ContentProtectionHelper.cpp \
     src/helpers/HostsHelper.cpp \
     src/helpers/UserHelper.cpp \
     src/components/IME/IMESelectorWidget.cpp \
     src/helpers/SystemControlHelper.cpp \
+    src/layout/FlowLayout.cpp \
     src/main.cpp \
     src/components/base/Button.cpp \
     src/components/base/Input.cpp \
@@ -33,8 +35,8 @@ SOURCES += \
     src/components/form/FormLayoutManager.cpp \
     src/components/form/FormCustomWidget.cpp \
     src/components/form/FormInput.cpp \
-    src/components/form/FormSelect.cpp \
-    src/components/base/Select.cpp \
+    src/components/form/FormDropDown.cpp \
+    src/components/base/DropDown.cpp \
     src/components/base/CustomMessageBox.cpp \
     src/components/devtools/DataViewerPanel.cpp \
     src/mainwindow.cpp \
@@ -49,9 +51,13 @@ SOURCES += \
     src/components/base/ClickableLabel.cpp \
     src/helpers/SettingsHelper.cpp \
     src/helpers/DNSHelper.cpp \
-    src/components/base/CardWidget.cpp
+    src/components/base/CardWidget.cpp \
+    src/components/base/Tab.cpp \
+    src/components/base/Table.cpp \
+    src/pages/ExamManagementPage.cpp
 
 HEADERS += \
+    include/components/base/TagSelect.h \
     include/helpers/AdminHelper.h \
     include/helpers/ContentProtectionHelper.h \
     include/helpers/HostsHelper.h \
@@ -64,14 +70,15 @@ HEADERS += \
     include/components/form/Form.h \
     include/components/form/FormCustomWidget.h \
     include/components/form/FormInput.h \
-    include/components/form/FormSelect.h \
+    include/components/form/FormDropDown.h \
     include/components/form/FormSignals.h \
     include/components/form/FormValidation.h \
     include/components/form/FormLayoutManager.h \
-    include/components/base/Select.h \
+    include/components/base/DropDown.h \
     include/components/base/CustomMessageBox.h \
     include/components/devtools/DataViewerPanel.h \
     include/components/form/FormItem.h \
+    include/layout/FlowLayout.h \
     include/mainwindow.h \
     include/pages/HomePage.h \
     include/pages/SettingsPage.h \
@@ -85,7 +92,10 @@ HEADERS += \
     include/components/base/ClickableLabel.h \
     include/helpers/SettingsHelper.h \
     include/helpers/DNSHelper.h \
-    include/components/base/CardWidget.h
+    include/components/base/CardWidget.h \
+    include/components/base/Tab.h \
+    include/components/base/Table.h \
+    include/pages/ExamManagementPage.h
 
 FORMS += \
     mainwindow.ui
@@ -95,12 +105,6 @@ TRANSLATIONS += \
     i18n/translations/en.ts \
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
-
-win32: LIBS += -lImm32 -lole32 -luuid -loleaut32 -lUser32
-
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
