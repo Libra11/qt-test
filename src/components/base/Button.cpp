@@ -13,7 +13,6 @@
 Button::Button(QWidget *parent)
     : QPushButton(parent)
 {
-    setFixedHeight(50); // 默认高度 50px
     setupLoadingAnimation();
     updateStyle();
 }
@@ -22,7 +21,6 @@ Button::Button(const QString &text, QWidget *parent)
     : QPushButton(text, parent)
 {
     m_originalText = text;
-    setFixedHeight(50); // 默认高度 50px
     setupLoadingAnimation();
     updateStyle();
 }
@@ -108,16 +106,17 @@ void Button::setLoading(bool loading)
 
         // Keep text but add space for the loading icon
         if (m_size != Size::Icon) {
-            setText(" " + m_originalText); // Add space for the loading icon
+            // 使用 QPushButton::setText 避免更新 m_originalText
+            QPushButton::setText(" " + m_originalText); // Add space for the loading icon
         } else {
-            setText("");
+            QPushButton::setText("");
         }
 
         // Hide the original icon during loading
         setIcon(QIcon());
     } else {
         // Restore original text and icon
-        setText(m_originalText);
+        QPushButton::setText(m_originalText);
         if (!m_originalIcon.isNull()) {
             setIcon(m_originalIcon);
         }
@@ -140,12 +139,19 @@ bool Button::isLoading() const
     return m_loading;
 }
 
+void Button::setText(const QString &text)
+{
+    m_originalText = text;
+    QPushButton::setText(text);
+}
+
 void Button::updateStyle()
 {
     QString baseStyle = QString(
         "QPushButton {"
         "    border-radius: 6px;"
         "    font-weight: 500;"
+        "    height: 36px;"
         "    %1"
         "    %2"
         "}"

@@ -12,7 +12,6 @@ void FormCustomWidgetHelper::addCustomWidget(Form* form, const FormItem& item) {
         }
 
         QLabel* errorLabel = new QLabel(form);
-        errorLabel->setStyleSheet("color: #ef4444; font-size: 12px; margin-left: 4px;");
         errorLabel->setVisible(false);
         form->errorLabels[item.key] = errorLabel;
 

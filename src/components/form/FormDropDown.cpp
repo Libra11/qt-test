@@ -1,28 +1,27 @@
 // FormDropDown.cpp
 #include "components/form/FormDropDown.h"
 
-void FormDropDownHelper::addDropDown(Form* form, const QString& key, const QStringList& options, const QString& placeholder) {
-    QLabel* label = new QLabel(key, form);
-    form->fieldLabels[key] = label;
+void FormDropDownHelper::addDropDown(Form* form, const FormItem& item) {
+    QLabel* label = new QLabel(item.label, form);
+    form->fieldLabels[item.key] = label;
 
     DropDown* dropDown = new DropDown();
-    if (!placeholder.isEmpty()) {
-        dropDown->addOption(placeholder, "");
+    if (!item.placeholder.isEmpty()) {
+        dropDown->addOption(item.placeholder, "");
     }
-    for (const auto& opt : options) {
+    for (const auto& opt : item.options) {
         dropDown->addOption(opt, opt);
     }
-    form->dropDowns[key] = dropDown;
-    form->requiredFields[key] = false;
-    form->m_fieldOrder.append(key);
+    form->dropDowns[item.key] = dropDown;
+    form->requiredFields[item.key] = false;
+    form->m_fieldOrder.append(item.key);
 
     QLabel* errorLabel = new QLabel(form);
-    errorLabel->setStyleSheet("color: #ef4444; font-size: 12px; margin-left: 4px;");
     errorLabel->setVisible(false);
-    form->errorLabels[key] = errorLabel;
+    form->errorLabels[item.key] = errorLabel;
 
-    form->initialValues[key] = "";
+    form->initialValues[item.key] = "";
 
-    form->setupFieldConnections(key, dropDown);
+    form->setupFieldConnections(item.key, dropDown);
     form->updateLayout();
 }

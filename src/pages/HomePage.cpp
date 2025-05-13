@@ -3,6 +3,8 @@
 #include <QTimer>
 #include <QGroupBox>
 #include <QLabel>
+#include <QScrollArea>
+#include <QScrollBar>
 #include "components/form/Form.h"
 #include "components/devtools/DataViewerPanel.h"
 #include "components/base/CustomMessageBox.h"
@@ -17,8 +19,23 @@ HomePage::HomePage(QWidget *parent) : PageBase(parent)
 
 void HomePage::setupUI()
 {
+    // 创建主布局
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    
+    // 创建滚动区域
+    QScrollArea *scrollArea = new QScrollArea(this);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setFrameShape(QFrame::NoFrame);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    
+    // 创建内容容器
+    QWidget *contentWidget = new QWidget(scrollArea);
+    QVBoxLayout *contentLayout = new QVBoxLayout(contentWidget);
+    contentLayout->setSpacing(20);
+    contentLayout->setContentsMargins(20, 20, 20, 20);
+    
     // 1. 按钮示例区域
     QGroupBox *buttonGroupBox = new QGroupBox("按钮示例");
     QVBoxLayout *buttonLayout = new QVBoxLayout(buttonGroupBox);
@@ -91,7 +108,7 @@ void HomePage::setupUI()
     loadingButtonsLayout->addWidget(iconOnlyLoadingBtn);
     buttonLayout->addLayout(loadingButtonsLayout);
 
-    mainLayout->addWidget(buttonGroupBox);
+    contentLayout->addWidget(buttonGroupBox);
 
     // 2. 表单示例区域
     QGroupBox *formGroupBox = new QGroupBox("表单示例");
@@ -219,7 +236,7 @@ void HomePage::setupUI()
 
     formLayout->addWidget(registerForm);
 
-    mainLayout->addWidget(formGroupBox);
+    contentLayout->addWidget(formGroupBox);
 
     // 3. 密码输入框示例区域
     QGroupBox *passwordGroupBox = new QGroupBox("密码输入框示例");
@@ -282,7 +299,7 @@ void HomePage::setupUI()
     passwordHelpText->setStyleSheet("color: #666; margin-top: 10px;");
     passwordLayout->addWidget(passwordHelpText);
 
-    mainLayout->addWidget(passwordGroupBox);
+    contentLayout->addWidget(passwordGroupBox);
 
     // 4. 消息框示例区域
     QGroupBox *messageBoxGroupBox = new QGroupBox("消息框示例");
@@ -417,10 +434,10 @@ void HomePage::setupUI()
     messageBoxHelpText->setStyleSheet("color: #666; margin-top: 10px;");
     messageBoxLayout->addWidget(messageBoxHelpText);
 
-    mainLayout->addWidget(messageBoxGroupBox);
+    contentLayout->addWidget(messageBoxGroupBox);
 
 
-    QGroupBox *tagSelectGroupBox = new QGroupBox("密码输入框示例");
+    QGroupBox *tagSelectGroupBox = new QGroupBox("标签选择示例");
     QVBoxLayout *tagSelectLayout = new QVBoxLayout(tagSelectGroupBox);
     TagSelect *tagSelect = new TagSelect;
     tagSelect->setOptions(QStringList() << "Option A" << "Option B" << "Option C" << "Option D" << "Option E");
@@ -434,7 +451,7 @@ void HomePage::setupUI()
 
     tagSelectLayout->addWidget(tagSelect);
     tagSelectLayout->addWidget(label);
-    mainLayout->addWidget(tagSelectGroupBox);
+    contentLayout->addWidget(tagSelectGroupBox);
 
     // 返回按钮
     Button *backBtn = new Button(QIcon(":/icons/arrow.svg"), "返回登录页");
@@ -442,5 +459,11 @@ void HomePage::setupUI()
     QObject::connect(backBtn, &Button::clicked, [=](){
         emit routeTo("login");
     });
-    mainLayout->addWidget(backBtn);
+    contentLayout->addWidget(backBtn);
+
+    // 设置滚动区域的内容
+    scrollArea->setWidget(contentWidget);
+
+    // 将滚动区域添加到主布局
+    mainLayout->addWidget(scrollArea);
 }

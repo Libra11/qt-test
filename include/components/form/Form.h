@@ -45,6 +45,7 @@ public:
     void updateLayout();
     bool validateField(const QString& key, const QString& value);
     void setupFieldConnections(const QString& key, QWidget* widget);
+    void applyStyleToFormItem();
 
     QMap<QString, Input*> inputs;
     QMap<QString, DropDown*> dropDowns;

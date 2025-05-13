@@ -201,12 +201,6 @@ void Input::updateStyle()
                 iconWidth = 20;
                 break;
         }
-
-        // Add right margin to make room for the eye icon (icon width + padding)
-        QLineEdit::setTextMargins(4, 8, iconWidth + 16, 8);
-    } else {
-        // Standard margins for regular text inputs
-        QLineEdit::setTextMargins(4, 8, 12, 8);
     }
 }
 
@@ -214,7 +208,7 @@ QString Input::getSizeClass() const
 {
     switch (m_size) {
         case Size::Default:
-            return "height: 40px;";
+            return "height: 36px;";
         case Size::Sm:
             return "height: 32px; font-size: 12px;";
         case Size::Lg:

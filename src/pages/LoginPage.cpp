@@ -10,6 +10,8 @@
 #include <QLabel>
 #include <QPixmap>
 #include <QUrl>
+#include <QFrame>
+#include <QSizePolicy>
 #include "components/base/Input.h"
 #include "components/base/Button.h"
 #include <QDebug>
@@ -24,51 +26,76 @@
 
 LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
 {
+    // 移除默认边距
+    setContentsMargins(0, 0, 0, 0);
+
+    // 创建主布局
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
+
+    // 左侧容器（灰色背景）
+    QFrame *leftContainer = new QFrame;
+    leftContainer->setStyleSheet("background-color: #f5f5f5;"); // 灰色背景
+    leftContainer->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+
+    // 左侧布局
+    QVBoxLayout *leftLayout = new QVBoxLayout(leftContainer);
+    leftLayout->setAlignment(Qt::AlignCenter);
 
     // 左侧插画
     QLabel *imgLabel = new QLabel;
-    imgLabel->setPixmap(QPixmap(":/icons/login_illustration.png").scaled(400, 400, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    // 保存图片路径以便在resize事件中使用
+    m_loginImagePath = ":/icons/login.png";
+
+    // 初始图片宽度设置为左侧区域的60%
+    int imgWidth = 0.6 * leftContainer->width();
+    if (imgWidth <= 0) imgWidth = 400; // 初始默认值
+
+    imgLabel->setPixmap(QPixmap(m_loginImagePath).scaled(imgWidth, imgWidth, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     imgLabel->setAlignment(Qt::AlignCenter);
+    imgLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
-    // 左侧按钮区域
-    QWidget *leftButtonsWidget = new QWidget;
-    QVBoxLayout *leftButtonsLayout = new QVBoxLayout(leftButtonsWidget);
+    // 保存imgLabel指针以便在resize事件中使用
+    m_imgLabel = imgLabel;
 
-    Button *homeBtn = new Button("去主页");
-    QObject::connect(homeBtn, &Button::clicked, [=]() {
-        emit routeTo("home");
-    });
-
-    Button *settingsBtn = new Button("设置页面");
-    settingsBtn->setVariant(Button::Variant::Default);
-    QObject::connect(settingsBtn, &Button::clicked, [=]() {
-        emit routeTo("settings");
-    });
-
-    leftButtonsLayout->addWidget(homeBtn);
-    leftButtonsLayout->addWidget(settingsBtn);
-    leftButtonsLayout->addStretch();
-
-    QVBoxLayout *leftLayout = new QVBoxLayout;
+    // 添加到左侧布局
     leftLayout->addWidget(imgLabel);
-    leftLayout->addWidget(leftButtonsWidget);
 
-    mainLayout->addLayout(leftLayout, 1);
+    // 右侧容器
+    QFrame *rightContainer = new QFrame;
+    rightContainer->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
-    // 右侧表单
+    // 右侧布局
+    QVBoxLayout *rightLayout = new QVBoxLayout(rightContainer);
+    rightLayout->setAlignment(Qt::AlignCenter);
+
+    // 右侧表单容器（最大宽度500px）
     QWidget *formWidget = new QWidget;
+    formWidget->setMaximumWidth(500);
     QVBoxLayout *formLayout = new QVBoxLayout(formWidget);
 
     formLayout->addStretch();
 
     QLabel *logoLabel = new QLabel("<b>国考云考试管理机</b>");
-    logoLabel->setAlignment(Qt::AlignCenter);
-    logoLabel->setStyleSheet("font-size: 28px; margin-bottom: 20px;");
+    QPixmap iconPixmap(":/icons/logo.png");
+    QLabel *iconLabel = new QLabel();
+    iconLabel->setPixmap(iconPixmap.scaled(iconPixmap.width() * 80 / iconPixmap.height(), 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    iconLabel->setAlignment(Qt::AlignLeft);
+    logoLabel->setAlignment(Qt::AlignLeft);
+    logoLabel->setStyleSheet("font-size: 48px; margin: 20px 0px;");
+    formLayout->addWidget(iconLabel);
     formLayout->addWidget(logoLabel);
 
     // 声明验证码图片指针
     ClickableLabel *imageCodeLabel = nullptr;
+
+    // 添加表单容器到右侧布局
+    rightLayout->addWidget(formWidget);
+
+    // 添加左右容器到主布局，各占50%
+    mainLayout->addWidget(leftContainer, 1);
+    mainLayout->addWidget(rightContainer, 1);
 
     // 创建表单
     form = new Form;
@@ -99,8 +126,8 @@ LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
                 input->setObjectName("imageCode");
                 input->setPlaceholder("请输入验证码");
                 imageCodeLabel = new ClickableLabel(w);
-                imageCodeLabel->setFixedSize(100, 36);
-                imageCodeLabel->setStyleSheet("background:#eee; border:1px solid #ccc;");
+                imageCodeLabel->setFixedSize(100, 52);
+                imageCodeLabel->setStyleSheet("border-radius:4px; border: 1px solid #eee;");
                 h->addWidget(input, 1);
                 h->addWidget(imageCodeLabel);
                 h->setContentsMargins(0,0,0,0);
@@ -112,9 +139,14 @@ LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
     form->setupByConfig(items);
     form->setSubmitText(tr("考场注册"));
     formLayout->addWidget(form);
-    formLayout->addStretch();
-    mainLayout->addWidget(formWidget, 1);
 
+    // Test
+    Button *homeBtn = new Button("去主页");
+    QObject::connect(homeBtn, &Button::clicked, [this](){
+            emit routeTo("home");
+    });
+    formLayout->addWidget(homeBtn);
+    formLayout->addStretch();
     // 自动填充loginCode
     QString savedLoginCode = SettingsHelper::value("loginCode").toString();
     if (!savedLoginCode.isEmpty()) {
@@ -193,4 +225,26 @@ LoginPage::LoginPage(QWidget *parent) : PageBase(parent)
             }
         );
     });
+}
+
+void LoginPage::resizeEvent(QResizeEvent *event)
+{
+    PageBase::resizeEvent(event);
+
+    // 调整图片大小为左侧区域的60%宽度
+    if (m_imgLabel) {
+        // 获取左侧容器的宽度
+        QWidget* leftContainer = m_imgLabel->parentWidget();
+        if (leftContainer) {
+            int containerWidth = leftContainer->width();
+            int imgWidth = containerWidth * 0.6; // 60%的宽度
+
+            // 更新图片大小
+            m_imgLabel->setPixmap(QPixmap(m_loginImagePath).scaled(
+                imgWidth, imgWidth,
+                Qt::KeepAspectRatio,
+                Qt::SmoothTransformation
+            ));
+        }
+    }
 }

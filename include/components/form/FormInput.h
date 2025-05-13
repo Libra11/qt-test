@@ -6,7 +6,7 @@
 
 class FormInputHelper {
 public:
-    static void addInput(Form* form, const QString& key, const QString& placeholder, FormItemType type = FormItemType::Input);
+    static void addInput(Form* form, const FormItem& item);
 };
 
 #endif // FORMINPUT_H

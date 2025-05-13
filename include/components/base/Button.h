@@ -44,6 +44,9 @@ public:
     void setLoading(bool loading);
     bool isLoading() const;
 
+    // Reimplement QPushButton methods
+    void setText(const QString &text);
+
 private:
     void updateStyle();
     QString getVariantClass() const;

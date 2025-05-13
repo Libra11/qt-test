@@ -1,8 +1,10 @@
 <RCC>
-  <qresource prefix="/icons">
-    <file>arrow.svg</file>
-    <file>loading.svg</file>
-    <file>eye.svg</file>
-    <file>eye-off.svg</file>
-  </qresource>
+    <qresource prefix="/icons">
+        <file>arrow.svg</file>
+        <file>loading.svg</file>
+        <file>eye.svg</file>
+        <file>eye-off.svg</file>
+        <file>login.png</file>
+        <file>logo.png</file>
+    </qresource>
 </RCC>

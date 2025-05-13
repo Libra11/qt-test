@@ -6,7 +6,7 @@
 
 class FormDropDownHelper {
 public:
-    static void addDropDown(Form* form, const QString& key, const QStringList& options, const QString& placeholder);
+    static void addDropDown(Form* form, const FormItem& item);
 };
 
 #endif // FORMDROPDOWN_H

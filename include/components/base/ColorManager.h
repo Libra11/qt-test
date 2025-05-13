@@ -29,4 +29,4 @@ public:
     static QString linkHover()         { return "#6366f1"; }
 };
 
-#endif // COLORMANAGER_H 
+#endif // COLORMANAGER_H

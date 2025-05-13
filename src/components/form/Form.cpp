@@ -17,14 +17,41 @@
 #include <QDebug>
 
 Form::Form(QWidget *parent) : QWidget(parent) {
-    layout = new QVBoxLayout(this);
+    // 创建主布局作为窗口的布局
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setContentsMargins(0, 0, 0, 0); // 移除主布局的边距
+
+    // 创建一个容器来放置表单字段
+    QWidget *formContainer = new QWidget();
+    layout = new QVBoxLayout(formContainer);
+
+    // 创建提交按钮
     submitBtn = new Button("提交");
     submitBtn->setVariant(Button::Variant::Default);
     connect(submitBtn, &Button::clicked, this, &Form::handleSubmit);
+
+    // 创建一个容器来放置按钮，使其宽度与表单一致
+    QWidget *buttonContainer = new QWidget();
+    QHBoxLayout *buttonLayout = new QHBoxLayout(buttonContainer);
+
+    // 设置按钮宽度为100%
+    submitBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    // 确保按钮容器的边距与表单容器一致
+    buttonLayout->addWidget(submitBtn);
+    buttonLayout->setContentsMargins(layout->contentsMargins());
+
+    // 将表单容器和按钮容器添加到主布局
+    mainLayout->addWidget(formContainer, 1);
+    mainLayout->addWidget(buttonContainer, 0);
+
+    // 设置一些间距
+    mainLayout->setSpacing(20);
 }
 
 void Form::handleSubmit() {
     // Set loading state before submitting
+    qDebug() << "Button clicked!";
     setLoading(true);
 
     // Emit beforeSubmit signal
@@ -43,10 +70,14 @@ void Form::handleValueChanged() {
 
 void Form::setupFieldConnections(const QString& key, QWidget* widget) {
     if (auto input = qobject_cast<Input*>(widget)) {
+        // 连接文本变化信号
         connect(input, &Input::textChanged, this, &Form::handleValueChanged);
         connect(input, &Input::textChanged, [this, key]() {
             FormValidationHelper::validateField(this, key, inputs[key]->text());
         });
+
+        // 连接回车键信号，按回车键提交表单
+        connect(input, &QLineEdit::returnPressed, this, &Form::handleSubmit);
     } else if (auto select = qobject_cast<DropDown*>(widget)) {
         connect(select, &DropDown::currentTextChanged, this, &Form::handleValueChanged);
         connect(select, &DropDown::currentTextChanged, [this, key]() {
@@ -59,6 +90,9 @@ void Form::setupFieldConnections(const QString& key, QWidget* widget) {
             connect(customInput, &Input::textChanged, [=]() {
                 FormValidationHelper::validateField(this, key, customInput->text());
             });
+
+            // 连接回车键信号，按回车键提交表单
+            connect(customInput, &QLineEdit::returnPressed, this, &Form::handleSubmit);
         }
     }
 }
@@ -127,13 +161,13 @@ void Form::setupByConfig(const QList<FormItem>& items) {
     for (const auto& item : items) {
         switch (item.type) {
             case FormItemType::Input:
-                FormInputHelper::addInput(this, item.key, item.placeholder, FormItemType::Input);
+                FormInputHelper::addInput(this, item);
                 break;
             case FormItemType::Password:
-                FormInputHelper::addInput(this, item.key, item.placeholder, FormItemType::Password);
+                FormInputHelper::addInput(this, item);
                 break;
             case FormItemType::DropDown:
-                FormDropDownHelper::addDropDown(this, item.key, item.options, item.placeholder);
+                FormDropDownHelper::addDropDown(this, item);
                 break;
             case FormItemType::Custom:
                 FormCustomWidgetHelper::addCustomWidget(this, item);
@@ -153,6 +187,7 @@ void Form::setupByConfig(const QList<FormItem>& items) {
     }
 
     updateLayout();
+    applyStyleToFormItem();
 }
 
 void Form::updateLayout() {
@@ -169,7 +204,7 @@ void Form::setDisabled(const QString& key, bool disabled) {
 
 void Form::setRequired(const QString& key, bool required) {
     requiredFields[key] = required;
-
+    qDebug() << fieldLabels[key]->text();
     if (fieldLabels.contains(key)) {
         QString labelText = fieldLabels[key]->text();
         if (required && !labelText.endsWith(" *")) {
@@ -204,6 +239,24 @@ void Form::setLoading(bool loading) {
 
 bool Form::isLoading() const {
     return submitBtn ? submitBtn->isLoading() : false;
+}
+
+void Form::applyStyleToFormItem()
+{
+    for (auto dropdown : dropDowns) {
+        if (dropdown)
+            dropdown->setStyleSheet("QComboBox { border: 1px solid #ccc; padding: 4px; }");
+    }
+
+    for (auto label : errorLabels) {
+        if (label)
+            label->setStyleSheet("color: red;");
+    }
+
+    for (auto label : fieldLabels) {
+        if (label)
+            label->setStyleSheet("color: #888; font-weight: bold; font-size: 16px;");
+    }
 }
 
 

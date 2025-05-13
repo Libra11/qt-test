@@ -2,7 +2,7 @@
  * @Author: Libra
  * @Date: 2025-05-07 17:58:11
  * @LastEditors: Libra
- * @Description: 
+ * @Description:
  */
 #include "components/form/FormValidation.h"
 
@@ -12,7 +12,23 @@ bool FormValidationHelper::validateField(Form* form, const QString& key, const Q
 
     if (form->requiredFields[key] && value.trimmed().isEmpty()) {
         valid = false;
-        errorMessage = "这是必填项";
+
+        // 获取字段标签文本
+        QString fieldLabel = "";
+        if (form->fieldLabels.contains(key)) {
+            fieldLabel = form->fieldLabels[key]->text();
+            // 移除可能的必填标记 " *"
+            if (fieldLabel.endsWith(" *")) {
+                fieldLabel.chop(2);
+            }
+        }
+
+        // 如果有标签文本，使用"请输入[字段名]"，否则使用通用消息
+        if (!fieldLabel.isEmpty()) {
+            errorMessage = QString("请输入%1").arg(fieldLabel);
+        } else {
+            errorMessage = "这是必填项";
+        }
     }
 
     if (valid && form->validationRules.contains(key)) {

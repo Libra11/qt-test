@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
     QWidget window;
     window.setWindowTitle("国考云考试管理机");
     window.setObjectName("window");
+    window.setContentsMargins(0, 0, 0, 0);
     window.setStyleSheet(R"(
         #window {
             background: #ffffff;
@@ -47,15 +48,17 @@ int main(int argc, char *argv[])
     PageManager *pageManager = new PageManager(stackedWidget);
 
     // 注册页面
-    pageManager->registerPage("login", new LoginPage);
-    pageManager->registerPage("settings", new SettingsPage);
-    pageManager->registerPage("home", new HomePage);
-    pageManager->registerPage("examcenter", new ExamCenterPage);
-    pageManager->registerPage("exammanagement", new ExamManagementPage);
+    pageManager->registerPage("login", []() { return new LoginPage; });
+    pageManager->registerPage("settings", []() { return new SettingsPage; });
+    pageManager->registerPage("home", []() { return new HomePage; });
+    pageManager->registerPage("examcenter", []() { return new ExamCenterPage; });
+    pageManager->registerPage("exammanagement", []() { return new ExamManagementPage; });
 
     // 主布局
     QVBoxLayout *mainLayout = new QVBoxLayout(&window);
     mainLayout->addWidget(stackedWidget);
+    mainLayout->setContentsMargins(0,0,0,0);
+    mainLayout->setSpacing(0);
 
     // 启动时显示登录页
     pageManager->switchTo("login");
